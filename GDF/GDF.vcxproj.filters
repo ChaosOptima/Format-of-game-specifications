@@ -21,39 +21,42 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Value.cpp">
+    <ClCompile Include="GDF\Attribute.cpp">
       <Filter>Header Files\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Node.cpp">
+    <ClCompile Include="GDF\Context.cpp">
       <Filter>Header Files\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Document.cpp">
+    <ClCompile Include="GDF\Document.cpp">
       <Filter>Header Files\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Context.cpp">
+    <ClCompile Include="GDF\Node.cpp">
       <Filter>Header Files\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Attribute.cpp">
+    <ClCompile Include="GDF\Value.cpp">
       <Filter>Header Files\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GDF.h">
+    <ClInclude Include="GDF\Allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Value.h">
+    <ClInclude Include="GDF\Attribute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Node.h">
+    <ClInclude Include="GDF\Context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Document.h">
+    <ClInclude Include="GDF\Document.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Context.h">
+    <ClInclude Include="GDF\GDF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Attribute.h">
+    <ClInclude Include="GDF\Node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GDF\Value.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

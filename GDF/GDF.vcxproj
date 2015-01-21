@@ -76,20 +76,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Attribute.cpp" />
-    <ClCompile Include="Context.cpp" />
-    <ClCompile Include="Document.cpp" />
-    <ClCompile Include="Node.cpp" />
-    <ClCompile Include="Value.cpp" />
+    <ClCompile Include="GDF\Attribute.cpp" />
+    <ClCompile Include="GDF\Context.cpp" />
+    <ClCompile Include="GDF\Document.cpp" />
+    <ClCompile Include="GDF\Node.cpp" />
+    <ClCompile Include="GDF\Value.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GDF.h" />
-    <ClInclude Include="Context.h" />
-    <ClInclude Include="Document.h" />
-    <ClInclude Include="Node.h" />
-    <ClInclude Include="Value.h" />
-    <ClInclude Include="Attribute.h" />
+    <ClInclude Include="GDF\Allocator.h" />
+    <ClInclude Include="GDF\GDF.h" />
+    <ClInclude Include="GDF\Context.h" />
+    <ClInclude Include="GDF\Document.h" />
+    <ClInclude Include="GDF\Node.h" />
+    <ClInclude Include="GDF\Value.h" />
+    <ClInclude Include="GDF\Attribute.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Test.txt" />

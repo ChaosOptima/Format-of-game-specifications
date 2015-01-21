@@ -1,5 +1,5 @@
 #include <iostream>
-#include "GDF.h"
+#include "GDF/GDF.h"
 
 using namespace std;
 using namespace GameDataFormat;
@@ -33,6 +33,7 @@ void TestFile()
 }
 
 
+/*
 void FillTest()
 {
 	GDF_Document lv_doc;
@@ -52,7 +53,7 @@ void FillTest()
 			lv_Ch.AppendChild().Value().Item().SetConstant("url[ya.ru]");
 		}
 
-		auto lv_at = lv_Ch.AppendAttribute().Name("atr");
+		auto lv_at = lv_Ch.AppendAttribute().Name("atrasd");
 		{
 			lv_at.Value() += 10;
 			lv_at.Value() += 4.55f;
@@ -68,15 +69,14 @@ void FillTest()
 	fclose(lv_File);
 	cout << lv_Str;
 	
-}
+}*/
 
 
 void main()
 {
 
 	TestFile();
-	FillTest();
-		
+	//FillTest();
 
 	cin.ignore();
 }
