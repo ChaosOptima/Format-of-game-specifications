@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <string>
 
+
+
 namespace GameDataFormat
 {
 	Allocator<sizeof(ValueItem)> ValueItemAlloc;
@@ -18,7 +20,7 @@ namespace GameDataFormat
 	void ValueData::ReadValue()
 	{
 		m_End = 0;
-		*m_Context += new(ReaderAlloc.Alloc()) Reader<ValueData>(this, &ValueData::ValueReader);
+		*m_Context += new READER_ALLOC  Reader<ValueData>(this, &ValueData::ValueReader);
 	}
 
 	bool ValueData::ValueReader(char* _char)
@@ -127,7 +129,7 @@ namespace GameDataFormat
 
 		m_CurrentValue->Type = VT_STRING;
 
-		*m_Context += new(ReaderAlloc.Alloc()) Reader<ValueData>(this, &ValueData::StringReader);
+		*m_Context += new READER_ALLOC  Reader<ValueData>(this, &ValueData::StringReader);
 		
 		return true;
 	}
@@ -182,7 +184,7 @@ namespace GameDataFormat
 		m_CurrentValue->Type = VT_META;
 
 		m_Context->ReadAsMeta(true);
-		*m_Context += new(ReaderAlloc.Alloc()) Reader<ValueData>(this, &ValueData::MetaReader);
+		*m_Context += new READER_ALLOC  Reader<ValueData>(this, &ValueData::MetaReader);
 
 		return true;
 	}
@@ -228,7 +230,7 @@ namespace GameDataFormat
 
 	ValueItem* ValueData::AddItem()
 	{
-		auto lv_NewItem = new(ValueItemAlloc.Alloc()) ValueItem();
+		auto lv_NewItem = new VALUE_ITEM_ALLOC  ValueItem();
 
 		if (!m_Values)
 		{
@@ -243,6 +245,39 @@ namespace GameDataFormat
 
 		m_ValueSize++;
 		return lv_NewItem;
+	}
+
+	void ValueItem::FreeStrings()
+	{
+		if (Lable)
+		{
+			auto lv_size = strlen(Lable);
+			auto lv_NewStr = new char[lv_size + 1];
+			lv_NewStr[lv_size] = 0;
+			memcpy(lv_NewStr, Lable, lv_size);
+			Lable = lv_NewStr;
+		}
+
+		if (String)
+		{
+			auto lv_size = strlen(String);
+			auto lv_NewStr = new char[lv_size + 1];
+			lv_NewStr[lv_size] = 0;
+			memcpy(lv_NewStr, String, lv_size);
+			String = lv_NewStr;
+		}
+
+		ContexHolder = false;
+	}
+
+	ValueItem::~ValueItem()
+	{
+		if (!ContexHolder)
+		{
+			delete[] String;
+			delete[] Lable;
+		}
+		
 	}
 
 
@@ -336,10 +371,9 @@ namespace GameDataFormat
 		m_Data->Type = VT_META;
 
 		auto lv_Size = _val.size();
-		if (!m_Data->ContexHolder)
-			delete m_Data->Lable;
-
-		m_Data->ContexHolder = false;
+		if (m_Data->ContexHolder)
+			m_Data->FreeStrings();
+		delete m_Data->Lable;
 
 		m_Data->Lable = new char[lv_Size + 1];
 		m_Data->Lable[lv_Size] = 0;
@@ -441,10 +475,10 @@ namespace GameDataFormat
 		m_Data->Type = VT_CONSTANT;
 
 		auto lv_Size = _val.size();
-		if (!m_Data->ContexHolder)
-			delete m_Data->String;
-		m_Data->ContexHolder = false;
+		if (m_Data->ContexHolder)
+			m_Data->FreeStrings();
 
+		delete m_Data->String;
 
 		m_Data->String = new char[lv_Size + 1];
 		m_Data->String[lv_Size] = 0;
@@ -478,9 +512,11 @@ namespace GameDataFormat
 		m_Data->Type = VT_STRING;
 
 		auto lv_Size = _val.size();
-		if (!m_Data->ContexHolder)
-			delete m_Data->String;
-		m_Data->ContexHolder = false;
+		if (m_Data->ContexHolder)
+			m_Data->FreeStrings();
+
+		delete m_Data->String;
+		
 
 		m_Data->String = new char[lv_Size + 1];
 		m_Data->String[lv_Size] = 0;
@@ -507,9 +543,10 @@ namespace GameDataFormat
 	{
 		m_Data->Type = VT_STRING;
 		auto lv_Size = strlen(_val);
-		if (!m_Data->ContexHolder)
-			delete m_Data->String;
-		m_Data->ContexHolder = false;
+		if (m_Data->ContexHolder)
+			m_Data->FreeStrings();
+
+		delete m_Data->String;
 
 		m_Data->String = new char[lv_Size + 1];
 		m_Data->String[lv_Size] = 0;
@@ -619,10 +656,10 @@ namespace GameDataFormat
 				}
 
 				auto lv_Size = lv_out.size();
-				if (!m_Data->ContexHolder)
-					delete m_Data->String;
-				m_Data->ContexHolder = false;
+				if (m_Data->ContexHolder)
+					m_Data->FreeStrings();
 
+				delete m_Data->String;
 				m_Data->String = new char[lv_Size + 1];
 				m_Data->String[lv_Size] = 0;
 				memcpy(m_Data->String, lv_out.c_str(), lv_Size);
@@ -728,6 +765,9 @@ namespace GameDataFormat
 	{
 		return *this = _val;
 	}
+
+	
+
 
 	
 

@@ -1,9 +1,13 @@
 #pragma once
 
+
+
 // 1MB
 #define PAGE_SIZE 1048576
 // 1KB
 // #define PAGE_SIZE 1024
+
+//#define LEACK_DEBUG
 
 namespace GameDataFormat
 {
@@ -44,6 +48,11 @@ namespace GameDataFormat
 		template<class T>
 		void Free(T* _ptr)
 		{
+#ifdef LEACK_DEBUG
+			delete _ptr;
+			return;
+#endif
+
 			if (!_ptr)
 				return;
 
@@ -56,7 +65,6 @@ namespace GameDataFormat
 			if (!m_Allocs)
 			{
 				Clear();
-
 			}
 
 		}

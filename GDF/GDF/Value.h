@@ -3,6 +3,38 @@
 #include <vector>
 #include "Allocator.h"
 
+#ifdef LEACK_DEBUG
+
+	#define _CRTDBG_MAP_ALLOC 1
+	#define _CheckLeaks _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF)
+	#define _BreakAllock(x) _CrtSetBreakAlloc(x)
+	#include <stdlib.h>
+	#include <crtdbg.h>
+
+	#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
+
+	#define READER_ALLOC 
+	#define VALUE_ITEM_ALLOC
+	#define VALUE_DATA_ALLOC
+	#define NODE_ALLOC 
+	#define ATTR_ALLOC
+
+#else
+	#ifndef _CheckLeaks
+		#define _CheckLeaks
+	#endif // !_CheckLeaks
+
+	
+	#define READER_ALLOC (ReaderAlloc.Alloc())
+	#define VALUE_ITEM_ALLOC (ValueItemAlloc.Alloc())
+	#define VALUE_DATA_ALLOC (ValueDataAlloc.Alloc())
+	#define NODE_ALLOC (NodeAlloc.Alloc())
+	#define ATTR_ALLOC (AttrAlloc.Alloc())
+
+#endif // LEACK_DEBUG
+
+
+
 #ifdef _DEBUG
 	#ifndef ASSERT_BREAK
 		#define ASSERT_BREAK( X ) {if(!(X)){__debugbreak();}}
@@ -12,6 +44,7 @@
 		#define ASSERT_BREAK( IGNORE ) {}
 	#endif
 #endif // DEBUG
+
 
 namespace GameDataFormat
 {
@@ -43,6 +76,9 @@ namespace GameDataFormat
 
 		ValueType Type = VT_NON;
 		ValueItem* Sibling = 0;
+
+		void FreeStrings();
+		~ValueItem();
 	};
 
 	struct ValueData

@@ -1,3 +1,6 @@
+
+
+
 #include <iostream>
 #include "GDF/GDF.h"
 
@@ -33,7 +36,6 @@ void TestFile()
 }
 
 
-/*
 void FillTest()
 {
 	GDF_Document lv_doc;
@@ -69,14 +71,15 @@ void FillTest()
 	fclose(lv_File);
 	cout << lv_Str;
 	
-}*/
+}
 
 
 void main()
 {
+	_CheckLeaks;
 
 	TestFile();
-	//FillTest();
+	FillTest();
 
 	cin.ignore();
 }

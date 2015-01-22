@@ -27,7 +27,7 @@ namespace GameDataFormat
 		NodeData* m_Parent = 0;
 		ValueData* m_Value = 0;
 		bool m_EndName = false;
-		bool ContexHolder = true;
+		bool ContextHolder = true;
 	};
 
 	class GDF_Attribute

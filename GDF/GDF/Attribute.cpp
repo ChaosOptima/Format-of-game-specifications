@@ -2,6 +2,8 @@
 #include "Node.h"
 #include "Context.h"
 
+
+
 namespace GameDataFormat
 {
 	AttributeData::AttributeData(GDF_Context* _context)
@@ -11,7 +13,7 @@ namespace GameDataFormat
 
 	void AttributeData::ReadName()
 	{
-		*m_Context += new(ReaderAlloc.Alloc()) Reader<AttributeData>(this, &AttributeData::NameReader);
+		*m_Context += new READER_ALLOC Reader<AttributeData>(this, &AttributeData::NameReader);
 	}
 
 	bool AttributeData::NameReader(char* _char)
@@ -86,7 +88,7 @@ namespace GameDataFormat
 
 			m_Context->PopReader();
 			AppendAttribute();
-			m_Value = new(ValueDataAlloc.Alloc()) ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
 			m_Value->m_Attribute = this;
 			m_Value->ReadValue(m_Name);
 			m_Name = 0;
@@ -99,7 +101,7 @@ namespace GameDataFormat
 
 			m_Context->PopReader();
 			AppendAttribute();
-			m_Value = new(ValueDataAlloc.Alloc()) ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
 			m_Value->m_Attribute = this;
 			m_Value->ReadValue();
 			if (m_Name)
@@ -113,7 +115,7 @@ namespace GameDataFormat
 
 			m_Context->PopReader();
 			AppendAttribute();
-			m_Value = new(ValueDataAlloc.Alloc()) ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
 			m_Value->m_Attribute = this;
 			m_Value->ReadValue();
 			auto lv_Ret = m_Context->Read(_char);
@@ -144,7 +146,7 @@ namespace GameDataFormat
 	void AttributeData::NameToValue()
 	{
 		if (!m_Value)
-			m_Value = new(ValueDataAlloc.Alloc()) ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
 		auto Item = m_Value->AddItem(); 
 
 		if (m_Name)
@@ -156,6 +158,9 @@ namespace GameDataFormat
 	AttributeData::~AttributeData()
 	{
 		ValueDataAlloc.Free(m_Value);
+
+		if (!ContextHolder)
+			delete[] m_Name;
 	}
 
 	void AttributeData::AppendAttribute()
@@ -183,9 +188,9 @@ namespace GameDataFormat
 	GDF_Attribute& GDF_Attribute::Name(const std::string& _val)
 	{
 		auto lv_Size = _val.size();
-		if (!m_Data->ContexHolder)
+		if (!m_Data->ContextHolder)
 			delete m_Data->m_Name;
-		m_Data->ContexHolder = false;
+		m_Data->ContextHolder = false;
 
 		m_Data->m_Name = new char[lv_Size + 1];
 		m_Data->m_Name[lv_Size] = 0;
@@ -197,9 +202,9 @@ namespace GameDataFormat
 	GDF_Attribute& GDF_Attribute::Name(const char* _val)
 	{
 		auto lv_Size = strlen(_val);
-		if (!m_Data->ContexHolder)
+		if (!m_Data->ContextHolder)
 			delete m_Data->m_Name;
-		m_Data->ContexHolder = false;
+		m_Data->ContextHolder = false;
 
 		m_Data->m_Name = new char[lv_Size + 1];
 		m_Data->m_Name[lv_Size] = 0;
@@ -214,7 +219,7 @@ namespace GameDataFormat
 
 		if (!m_Data->m_Value)
 		{
-			m_Data->m_Value = new(ValueDataAlloc.Alloc()) ValueData(0);
+			m_Data->m_Value = new VALUE_DATA_ALLOC ValueData(0);
 			m_Data->m_Value->m_Attribute = m_Data;
 		}
 

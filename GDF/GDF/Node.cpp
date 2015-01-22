@@ -15,7 +15,7 @@ namespace GameDataFormat
 
 	void NodeData::ReadNodes()
 	{
-		*m_Context += new(ReaderAlloc.Alloc()) Reader<NodeData>(this, &NodeData::NodesReader);
+		*m_Context += new READER_ALLOC Reader<NodeData>(this, &NodeData::NodesReader);
 	}
 
 	bool NodeData::NodesReader(char* _char)
@@ -28,7 +28,7 @@ namespace GameDataFormat
 			return true;
 		}
 
-		NodeData* lv_NewNode = new(NodeAlloc.Alloc()) NodeData(m_Context);
+		NodeData* lv_NewNode = new NODE_ALLOC NodeData(m_Context);
 		lv_NewNode->m_Parent = this;
 		lv_NewNode->ReadName();
 		return m_Context->Read(_char);
@@ -36,7 +36,7 @@ namespace GameDataFormat
 
 	void NodeData::ReadAttributes()
 	{
-		*m_Context += new(ReaderAlloc.Alloc()) Reader<NodeData>(this, &NodeData::AttributesReader);
+		*m_Context += new READER_ALLOC Reader<NodeData>(this, &NodeData::AttributesReader);
 	}
 
 	bool NodeData::AttributesReader(char* _char)
@@ -49,7 +49,7 @@ namespace GameDataFormat
 			return true;
 		}
 
-		AttributeData* lv_NewData = new(AttrAlloc.Alloc())AttributeData(m_Context);
+		AttributeData* lv_NewData = new ATTR_ALLOC AttributeData(m_Context);
 		lv_NewData->m_Parent = this;
 		lv_NewData->ReadName();
 		return m_Context->Read(_char);
@@ -59,7 +59,7 @@ namespace GameDataFormat
 	void NodeData::ReadName()
 	{
 		m_End = 0;
-		*m_Context += new(ReaderAlloc.Alloc()) Reader<NodeData>(this, &NodeData::NameReader);
+		*m_Context += new READER_ALLOC Reader<NodeData>(this, &NodeData::NameReader);
 	}
 
 	bool NodeData::NameReader(char* _char)
@@ -81,7 +81,7 @@ namespace GameDataFormat
 
 			if (!m_Value && !m_Attributes)
 			{
-				m_Value = new(ValueDataAlloc.Alloc()) ValueData(m_Context);
+				m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
 				auto Item = m_Value->AddItem();
 				if (m_Name)
 					*(m_End + 1) = 0;
@@ -103,7 +103,7 @@ namespace GameDataFormat
 			if (m_Value || m_Attributes)
 				return false;
 
-			m_Value = new(ValueDataAlloc.Alloc()) ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
 			auto Item = m_Value->AddItem();
 			if (m_Name)
 				*(m_End + 1) = 0;
@@ -134,7 +134,7 @@ namespace GameDataFormat
 
 			if (!m_Value && !m_Attributes)
 			{
-				m_Value = new(ValueDataAlloc.Alloc()) ValueData(m_Context);
+				m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
 				auto Item = m_Value->AddItem();
 				if (m_Name)
 					*(m_End + 1) = 0;
@@ -164,7 +164,7 @@ namespace GameDataFormat
 
 
 			NameEnds();
-			m_Value = new(ValueDataAlloc.Alloc()) ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
 			m_Value->m_Node = this;
 			m_Value->ReadValue();
 			return true;
@@ -175,7 +175,7 @@ namespace GameDataFormat
 				return false;
 
 			m_Context->PopReader();
-			m_Value = new(ValueDataAlloc.Alloc()) ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
 			m_Value->m_Node = this;
 			m_Value->ReadValue();
 			auto lv_Ret = m_Context->Read(_char);
@@ -197,7 +197,7 @@ namespace GameDataFormat
 			lv_Tmp = m_Name; 
 			m_Name = 0;
 			NameEnds();
-			m_Value = new(ValueDataAlloc.Alloc()) ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
 			m_Value->m_Node = this;
 			m_Value->ReadValue(lv_Tmp);
 			return true;
@@ -255,6 +255,9 @@ namespace GameDataFormat
 		}
 			
 		ValueDataAlloc.Free(m_Value);
+
+		if (!ContextHolder)
+			delete[] m_Name;
 	}
 
 	void NodeData::AppendNode()
@@ -338,7 +341,7 @@ namespace GameDataFormat
 	{
 		if (!m_Data->m_Value)
 		{
-			m_Data->m_Value = new(ValueDataAlloc.Alloc()) ValueData(0);
+			m_Data->m_Value = new VALUE_DATA_ALLOC ValueData(0);
 			m_Data->m_Value->m_Node = m_Data;
 		}
 
@@ -389,7 +392,7 @@ namespace GameDataFormat
 
 	GDF_Node GDF_Node::AppendChild()
 	{
-		NodeData* lv_Node = new(NodeAlloc.Alloc()) NodeData(0);
+		NodeData* lv_Node = new NODE_ALLOC NodeData(0);
 		lv_Node->m_Parent = m_Data;
 		lv_Node->m_Sibling = m_Data->m_Nodes;
 		m_Data->m_Nodes = lv_Node;
@@ -413,7 +416,7 @@ namespace GameDataFormat
 
 	GDF_Attribute GDF_Node::AppendAttribute()
 	{
-		auto lv_Attr = new(AttrAlloc.Alloc()) AttributeData(0);
+		auto lv_Attr = new ATTR_ALLOC  AttributeData(0);
 		lv_Attr->m_Parent = m_Data;
 		lv_Attr->m_Sibling = m_Data->m_Attributes;
 		m_Data->m_Attributes = lv_Attr;
