@@ -1,5 +1,5 @@
 ##Grammar
-```gdf file = {object}```
+```FOGS file = {object}```
 
 ###Object
 ```
