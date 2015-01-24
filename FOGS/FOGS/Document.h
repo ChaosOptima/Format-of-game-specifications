@@ -6,15 +6,15 @@ namespace GameDataFormat
 {
 	struct NodeData;
 
-	class GDF_Document
+	class FOGS_Document
 	{
 	public:
-		GDF_Document();
-		~GDF_Document();
+		FOGS_Document();
+		~FOGS_Document();
 
 		bool Load(const std::string& _string);
 		std::string Save();
-		GDF_Node Root();
+		FOGS_Node Root();
 		
 		int ErrorLine();
 		int ErrorChar();

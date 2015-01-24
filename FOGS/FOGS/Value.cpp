@@ -12,7 +12,7 @@ namespace GameDataFormat
 	Allocator<sizeof(ValueItem)> ValueItemAlloc;
 	Allocator<sizeof(ValueData)> ValueDataAlloc;
 
-	ValueData::ValueData(GDF_Context* _context)
+	ValueData::ValueData(FOGS_Context* _context)
 	{
 		m_Context = _context;
 	}
@@ -282,22 +282,22 @@ namespace GameDataFormat
 
 
 
-	GDF_Value::GDF_Value(ValueData* _data)
+	FOGS_Value::FOGS_Value(ValueData* _data)
 	{
 		m_Data = _data;
 	}
 
-	GDF_Value::operator bool()
+	FOGS_Value::operator bool()
 	{
 		return m_Data->m_Values != 0;
 	}
 
-	bool GDF_Value::IsArray()
+	bool FOGS_Value::IsArray()
 	{
 		return m_Data->m_Values && m_Data->m_Values->Sibling;
 	}
 
-	GDF_ValueItem GDF_Value::Item()
+	FOGS_ValueItem FOGS_Value::Item()
 	{
 		if (!m_Data->m_Values)
 			m_Data->AddItem();
@@ -305,7 +305,7 @@ namespace GameDataFormat
 		return m_Data->m_Values;
 	}
 
-	GameDataFormat::GDF_ValueItem GDF_Value::Item(int _ind)
+	GameDataFormat::FOGS_ValueItem FOGS_Value::Item(int _ind)
 	{
 		auto lv_Val = m_Data->m_Values;
 		for (int i = 0; lv_Val && i < _ind; i++)
@@ -314,19 +314,19 @@ namespace GameDataFormat
 		return lv_Val;
 	}
 
-	unsigned int GDF_Value::ItemsCount()
+	unsigned int FOGS_Value::ItemsCount()
 	{
 		return m_Data->m_ValueSize;
 	}
 
-	GameDataFormat::GDF_ValueItem GDF_Value::operator[](int _ind)
+	GameDataFormat::FOGS_ValueItem FOGS_Value::operator[](int _ind)
 	{
 		return Item(_ind);
 	}
 
-	std::vector<GDF_ValueItem> GDF_Value::Items()
+	std::vector<FOGS_ValueItem> FOGS_Value::Items()
 	{
-		std::vector<GDF_ValueItem> lv_Items;
+		std::vector<FOGS_ValueItem> lv_Items;
 		lv_Items.reserve(m_Data->m_ValueSize);
 		for (auto lv_Val = m_Data->m_Values; lv_Val; lv_Val = lv_Val->Sibling)
 			lv_Items.push_back(lv_Val);
@@ -334,39 +334,39 @@ namespace GameDataFormat
 		return lv_Items;
 	}
 
-	GDF_Value::operator GDF_ValueItem()
+	FOGS_Value::operator FOGS_ValueItem()
 	{
 		return m_Data->m_Values;
 	}
 
-	GDF_ValueItem GDF_Value::AppendItem()
+	FOGS_ValueItem FOGS_Value::AppendItem()
 	{
 		auto lv_NewItem = m_Data->AddItem();
 		return lv_NewItem;
 	}
 
-	GDF_ValueItem GDF_Value::operator*()
+	FOGS_ValueItem FOGS_Value::operator*()
 	{
 		return Item();
 	}
 
-	bool GDF_Value::IsEmpty()
+	bool FOGS_Value::IsEmpty()
 	{
 		return !m_Data->m_Values;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	GDF_ValueItem::GDF_ValueItem(ValueItem* _data)
+	FOGS_ValueItem::FOGS_ValueItem(ValueItem* _data)
 	{
 		m_Data = _data;
 	}
 
-	std::string GDF_ValueItem::Lable()
+	std::string FOGS_ValueItem::Lable()
 	{
 		return m_Data->Lable ?m_Data->Lable :"";
 	}
 
-	GDF_ValueItem& GDF_ValueItem::Lable(const std::string& _val)
+	FOGS_ValueItem& FOGS_ValueItem::Lable(const std::string& _val)
 	{
 		m_Data->Type = VT_META;
 
@@ -381,7 +381,7 @@ namespace GameDataFormat
 		return *this;
 	}
 
-	ValueType GDF_ValueItem::Type()
+	ValueType FOGS_ValueItem::Type()
 	{
 		if (!m_Data)
 			return VT_NON;
@@ -470,7 +470,7 @@ namespace GameDataFormat
 		return m_Data->Type;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::SetConstant(const std::string& _val)
+	FOGS_ValueItem& FOGS_ValueItem::SetConstant(const std::string& _val)
 	{
 		m_Data->Type = VT_CONSTANT;
 
@@ -486,28 +486,28 @@ namespace GameDataFormat
 		return *this;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::operator=(long long _val)
+	FOGS_ValueItem& FOGS_ValueItem::operator=(long long _val)
 	{
 		m_Data->Type = VT_INT;
 		m_Data->AsInt = _val;
 		return *this;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::operator=(long double _val)
+	FOGS_ValueItem& FOGS_ValueItem::operator=(long double _val)
 	{
 		m_Data->Type = VT_FLOAT;
 		m_Data->AsDouble = _val;
 		return *this;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::operator=(bool _val)
+	FOGS_ValueItem& FOGS_ValueItem::operator=(bool _val)
 	{
 		m_Data->Type = VT_BOOL;
 		m_Data->AsDouble = _val;
 		return *this;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::operator=(const std::string& _val)
+	FOGS_ValueItem& FOGS_ValueItem::operator=(const std::string& _val)
 	{
 		m_Data->Type = VT_STRING;
 
@@ -525,21 +525,21 @@ namespace GameDataFormat
 		return *this;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::operator=(int _val)
+	FOGS_ValueItem& FOGS_ValueItem::operator=(int _val)
 	{
 		m_Data->Type = VT_INT;
 		m_Data->AsInt = _val;
 		return *this;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::operator=(float _val)
+	FOGS_ValueItem& FOGS_ValueItem::operator=(float _val)
 	{
 		m_Data->Type = VT_FLOAT;
 		m_Data->AsDouble = _val;
 		return *this;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::operator=(const char* _val)
+	FOGS_ValueItem& FOGS_ValueItem::operator=(const char* _val)
 	{
 		m_Data->Type = VT_STRING;
 		auto lv_Size = strlen(_val);
@@ -554,14 +554,14 @@ namespace GameDataFormat
 		return *this;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::operator=(double _val)
+	FOGS_ValueItem& FOGS_ValueItem::operator=(double _val)
 	{
 		m_Data->Type = VT_FLOAT;
 		m_Data->AsDouble = _val;
 		return *this;
 	}
 
-	long long GDF_ValueItem::AsInt()
+	long long FOGS_ValueItem::AsInt()
 	{
 		auto lv_Type = Type();
 		if (lv_Type == VT_INT)
@@ -582,7 +582,7 @@ namespace GameDataFormat
 		}
 	}
 
-	long double GDF_ValueItem::AsDouble()
+	long double FOGS_ValueItem::AsDouble()
 	{
 		auto lv_Type = Type();
 		if (lv_Type == VT_FLOAT)
@@ -604,7 +604,7 @@ namespace GameDataFormat
 		
 	}
 
-	bool GDF_ValueItem::AsBool()
+	bool FOGS_ValueItem::AsBool()
 	{
 		auto lv_Type = Type();
 		if (lv_Type == VT_BOOL)
@@ -622,7 +622,7 @@ namespace GameDataFormat
 		}
 	}
 
-	std::string GDF_ValueItem::AsString()
+	std::string FOGS_ValueItem::AsString()
 	{
 		auto lv_Type = Type();
 
@@ -691,77 +691,77 @@ namespace GameDataFormat
 		}
 	}
 
-	GDF_ValueItem::operator int()
+	FOGS_ValueItem::operator int()
 	{
 		return (int)AsInt();
 	}
 
-	GDF_ValueItem::operator unsigned int()
+	FOGS_ValueItem::operator unsigned int()
 	{
 		return (unsigned int)AsInt();
 	}
 
-	GDF_ValueItem::operator long()
+	FOGS_ValueItem::operator long()
 	{
 		return (long)AsInt();
 	}
 
-	GDF_ValueItem::operator unsigned long()
+	FOGS_ValueItem::operator unsigned long()
 	{
 		return (unsigned long)AsInt();
 	}
 
-	GDF_ValueItem::operator unsigned long long()
+	FOGS_ValueItem::operator unsigned long long()
 	{
 		return (unsigned long long)AsInt();
 	}
 
-	GDF_ValueItem::operator long long()
+	FOGS_ValueItem::operator long long()
 	{
 		return AsInt();
 	}
 
-	GDF_ValueItem::operator float()
+	FOGS_ValueItem::operator float()
 	{
 		return (float)AsDouble();
 	}
 
-	GDF_ValueItem::operator double()
+	FOGS_ValueItem::operator double()
 	{
 		return AsDouble();
 	}
 
-	GDF_ValueItem::operator long double()
+	FOGS_ValueItem::operator long double()
 	{
 		return AsDouble();
 	}
 
-	GDF_ValueItem::operator bool()
+	FOGS_ValueItem::operator bool()
 	{
 		return AsBool();
 	}
 
-	GDF_ValueItem::operator std::string()
+	FOGS_ValueItem::operator std::string()
 	{
 		return AsString();
 	}
 
-	GDF_ValueItem& GDF_ValueItem::SetString(const std::string& _val)
+	FOGS_ValueItem& FOGS_ValueItem::SetString(const std::string& _val)
 	{
 		return *this = _val;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::SetInt(long long _val)
+	FOGS_ValueItem& FOGS_ValueItem::SetInt(long long _val)
 	{
 		return *this = _val;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::SetFloat(long double _val)
+	FOGS_ValueItem& FOGS_ValueItem::SetFloat(long double _val)
 	{
 		return *this = _val;
 	}
 
-	GDF_ValueItem& GDF_ValueItem::SetBool(long long _val)
+	FOGS_ValueItem& FOGS_ValueItem::SetBool(long long _val)
 	{
 		return *this = _val;
 	}

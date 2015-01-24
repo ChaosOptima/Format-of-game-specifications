@@ -14,6 +14,7 @@
     <ProjectGuid>{8DBE919B-0968-47F8-952D-0689D76C6323}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GDF</RootNamespace>
+    <ProjectName>FOGS</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -76,21 +77,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GDF\Attribute.cpp" />
-    <ClCompile Include="GDF\Context.cpp" />
-    <ClCompile Include="GDF\Document.cpp" />
-    <ClCompile Include="GDF\Node.cpp" />
-    <ClCompile Include="GDF\Value.cpp" />
+    <ClCompile Include="FOGS\Attribute.cpp" />
+    <ClCompile Include="FOGS\Context.cpp" />
+    <ClCompile Include="FOGS\Document.cpp" />
+    <ClCompile Include="FOGS\Node.cpp" />
+    <ClCompile Include="FOGS\Value.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GDF\Allocator.h" />
-    <ClInclude Include="GDF\GDF.h" />
-    <ClInclude Include="GDF\Context.h" />
-    <ClInclude Include="GDF\Document.h" />
-    <ClInclude Include="GDF\Node.h" />
-    <ClInclude Include="GDF\Value.h" />
-    <ClInclude Include="GDF\Attribute.h" />
+    <ClInclude Include="FOGS\Allocator.h" />
+    <ClInclude Include="FOGS\FOGS.h" />
+    <ClInclude Include="FOGS\Context.h" />
+    <ClInclude Include="FOGS\Document.h" />
+    <ClInclude Include="FOGS\Node.h" />
+    <ClInclude Include="FOGS\Value.h" />
+    <ClInclude Include="FOGS\Attribute.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Test.txt" />

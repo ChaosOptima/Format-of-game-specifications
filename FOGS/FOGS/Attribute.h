@@ -3,13 +3,13 @@
 
 namespace GameDataFormat
 {
-	class GDF_Context;
+	class FOGS_Context;
 	struct NodeData;
 	struct ValueData;
 
 	struct AttributeData
 	{
-		AttributeData(GDF_Context* _context);
+		AttributeData(FOGS_Context* _context);
 		~AttributeData();
 
 		void ReadName();
@@ -23,22 +23,22 @@ namespace GameDataFormat
 		char* m_End = 0;
 
 		AttributeData* m_Sibling = 0;
-		GDF_Context* m_Context = 0;
+		FOGS_Context* m_Context = 0;
 		NodeData* m_Parent = 0;
 		ValueData* m_Value = 0;
 		bool m_EndName = false;
 		bool ContextHolder = true;
 	};
 
-	class GDF_Attribute
+	class FOGS_Attribute
 	{
 	public:
-		GDF_Attribute(AttributeData* _data);
+		FOGS_Attribute(AttributeData* _data);
 
 		std::string Name();
-		GDF_Attribute& Name(const std::string& _val);
-		GDF_Attribute& Name(const char* _val);
-		GDF_Value Value();
+		FOGS_Attribute& Name(const std::string& _val);
+		FOGS_Attribute& Name(const char* _val);
+		FOGS_Value Value();
 		bool IsNull();
 
 		operator bool();

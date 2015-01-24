@@ -48,7 +48,7 @@
 
 namespace GameDataFormat
 {
-	class GDF_Context;
+	class FOGS_Context;
 	struct NodeData;
 	struct AttributeData;
 
@@ -83,7 +83,7 @@ namespace GameDataFormat
 
 	struct ValueData
 	{
-		ValueData(GDF_Context* _context);
+		ValueData(FOGS_Context* _context);
 		~ValueData();
 
 		void ReadValue();
@@ -103,7 +103,7 @@ namespace GameDataFormat
 
 		NodeData* m_Node = 0;
 		AttributeData* m_Attribute = 0;
-		GDF_Context* m_Context = 0;
+		FOGS_Context* m_Context = 0;
 		ValueItem* m_CurrentValue = 0;
 		bool m_IgnorNext = false;
 		bool m_ValueReady = false;
@@ -114,13 +114,13 @@ namespace GameDataFormat
 	extern Allocator<sizeof(ValueItem)> ValueItemAlloc;
 	extern Allocator<sizeof(ValueData)> ValueDataAlloc;
 
-	class GDF_ValueItem
+	class FOGS_ValueItem
 	{
 	public:
-		GDF_ValueItem(ValueItem* _data);
+		FOGS_ValueItem(ValueItem* _data);
 
 		std::string Lable();
-		GDF_ValueItem& Lable(const std::string& _val);
+		FOGS_ValueItem& Lable(const std::string& _val);
 
 		ValueType Type();
 
@@ -129,20 +129,20 @@ namespace GameDataFormat
 		long long AsInt();
 		bool AsBool();
 
-		GDF_ValueItem& SetConstant(const std::string& _val);
-		GDF_ValueItem& SetString(const std::string& _val);
-		GDF_ValueItem& SetInt(long long _val);
-		GDF_ValueItem& SetFloat(long double _val);
-		GDF_ValueItem& SetBool(long long _val);
+		FOGS_ValueItem& SetConstant(const std::string& _val);
+		FOGS_ValueItem& SetString(const std::string& _val);
+		FOGS_ValueItem& SetInt(long long _val);
+		FOGS_ValueItem& SetFloat(long double _val);
+		FOGS_ValueItem& SetBool(long long _val);
 		
-		GDF_ValueItem& operator = (int _val);
-		GDF_ValueItem& operator = (long long _val);
-		GDF_ValueItem& operator = (float _val);
-		GDF_ValueItem& operator = (double _val);
-		GDF_ValueItem& operator = (long double _val);
-		GDF_ValueItem& operator = (bool _val);
-		GDF_ValueItem& operator = (const std::string& _val);
-		GDF_ValueItem& operator = (const char* _val);
+		FOGS_ValueItem& operator = (int _val);
+		FOGS_ValueItem& operator = (long long _val);
+		FOGS_ValueItem& operator = (float _val);
+		FOGS_ValueItem& operator = (double _val);
+		FOGS_ValueItem& operator = (long double _val);
+		FOGS_ValueItem& operator = (bool _val);
+		FOGS_ValueItem& operator = (const std::string& _val);
+		FOGS_ValueItem& operator = (const char* _val);
 		
 		operator int();
 		operator unsigned int();
@@ -160,27 +160,27 @@ namespace GameDataFormat
 		ValueItem* m_Data = 0;
 	};
 
-	class GDF_Value
+	class FOGS_Value
 	{
 	public:
-		GDF_Value(ValueData* _data);
+		FOGS_Value(ValueData* _data);
 
 		bool IsArray();
 		bool IsEmpty();
 
 		unsigned int ItemsCount();
-		GDF_ValueItem Item();
-		GDF_ValueItem Item(int _ind);
-		GDF_ValueItem AppendItem();
-		std::vector<GDF_ValueItem> Items();
+		FOGS_ValueItem Item();
+		FOGS_ValueItem Item(int _ind);
+		FOGS_ValueItem AppendItem();
+		std::vector<FOGS_ValueItem> Items();
 
 		operator bool();
-		operator GDF_ValueItem();
-		GDF_ValueItem operator[](int _ind);
-		GDF_ValueItem operator*();
+		operator FOGS_ValueItem();
+		FOGS_ValueItem operator[](int _ind);
+		FOGS_ValueItem operator*();
 
 		template<class T>
-		GDF_ValueItem operator+=(T _val)
+		FOGS_ValueItem operator+=(T _val)
 		{
 			auto lv_Item = AppendItem();
 			lv_Item = _val;
@@ -188,7 +188,7 @@ namespace GameDataFormat
 		}
 
 		template<class T>
-		GDF_ValueItem operator=(T _val)
+		FOGS_ValueItem operator=(T _val)
 		{
 			auto lv_Item = Item();
 			lv_Item = _val;

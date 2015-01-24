@@ -6,7 +6,7 @@
 
 namespace GameDataFormat
 {
-	AttributeData::AttributeData(GDF_Context* _context)
+	AttributeData::AttributeData(FOGS_Context* _context)
 	{
 		m_Context = _context;
 	}
@@ -175,17 +175,17 @@ namespace GameDataFormat
 	}
 
 
-	GDF_Attribute::GDF_Attribute(AttributeData* _data)
+	FOGS_Attribute::FOGS_Attribute(AttributeData* _data)
 	{
 		m_Data = _data;
 	}
 
-	std::string GDF_Attribute::Name()
+	std::string FOGS_Attribute::Name()
 	{
 		return m_Data->m_Name;
 	}
 
-	GDF_Attribute& GDF_Attribute::Name(const std::string& _val)
+	FOGS_Attribute& FOGS_Attribute::Name(const std::string& _val)
 	{
 		auto lv_Size = _val.size();
 		if (!m_Data->ContextHolder)
@@ -199,7 +199,7 @@ namespace GameDataFormat
 		return *this;
 	}
 
-	GDF_Attribute& GDF_Attribute::Name(const char* _val)
+	FOGS_Attribute& FOGS_Attribute::Name(const char* _val)
 	{
 		auto lv_Size = strlen(_val);
 		if (!m_Data->ContextHolder)
@@ -212,7 +212,7 @@ namespace GameDataFormat
 		return *this;
 	}
 
-	GDF_Value GDF_Attribute::Value()
+	FOGS_Value FOGS_Attribute::Value()
 	{
 		if (!m_Data)
 			return 0;
@@ -226,12 +226,12 @@ namespace GameDataFormat
 		return m_Data->m_Value;
 	}
 
-	GDF_Attribute::operator bool()
+	FOGS_Attribute::operator bool()
 	{
 		return m_Data != 0;
 	}
 
-	bool GDF_Attribute::IsNull()
+	bool FOGS_Attribute::IsNull()
 	{
 		return m_Data == 0;
 	}

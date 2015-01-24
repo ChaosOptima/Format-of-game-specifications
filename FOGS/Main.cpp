@@ -1,8 +1,6 @@
 
-
-
 #include <iostream>
-#include "GDF/GDF.h"
+#include "FOGS/FOGS.h"
 
 using namespace std;
 using namespace GameDataFormat;
@@ -21,7 +19,7 @@ void TestFile()
 		fclose(lv_File);
 	}
 
-	GDF_Document lv_doc;
+	FOGS_Document lv_doc;
 	if (!lv_doc.Load(TestString))
 		cout << "Error at ln:" << lv_doc.ErrorLine() << " ch:" << lv_doc.ErrorChar();// << " " << lv_doc.ErrorString();
 	else
@@ -38,7 +36,7 @@ void TestFile()
 
 void FillTest()
 {
-	GDF_Document lv_doc;
+	FOGS_Document lv_doc;
 	auto lv_Root = lv_doc.Root();
 	for (int i = 0; i < 20; i++)
 	{

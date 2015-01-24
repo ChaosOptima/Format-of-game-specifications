@@ -5,15 +5,15 @@
 namespace GameDataFormat
 {
 
-	GDF_Document::GDF_Document()
+	FOGS_Document::FOGS_Document()
 	{
 
 	}
 
 
-	bool GDF_Document::Load(const std::string& _string)
+	bool FOGS_Document::Load(const std::string& _string)
 	{
-		GDF_Context lv_Context(_string);
+		FOGS_Context lv_Context(_string);
 		if (!lv_Context.GetReady())
 			return false;
 		
@@ -31,22 +31,22 @@ namespace GameDataFormat
 		}
 	}
 
-	int GDF_Document::ErrorLine()
+	int FOGS_Document::ErrorLine()
 	{
 		return m_ErrorLine;
 	}
 
-	int GDF_Document::ErrorChar()
+	int FOGS_Document::ErrorChar()
 	{
 		return m_ErrorChar;
 	}
 
-	std::string GDF_Document::ErrorString()
+	std::string FOGS_Document::ErrorString()
 	{
 		return "";// m_ErrorString;
 	}
 
-	GDF_Node GDF_Document::Root()
+	FOGS_Node FOGS_Document::Root()
 	{
 		if (!m_Root)
 			m_Root = new NodeData(0);
@@ -54,12 +54,12 @@ namespace GameDataFormat
 		return m_Root;
 	}
 
-	GDF_Document::~GDF_Document()
+	FOGS_Document::~FOGS_Document()
 	{
 		delete m_Root;
 	}
 
-	std::string GDF_Document::Save()
+	std::string FOGS_Document::Save()
 	{
 		std::string lv_Out;
 		lv_Out += "{\n";
@@ -70,7 +70,7 @@ namespace GameDataFormat
 		return lv_Out;
 	}
 
-	void GDF_Document::AddChilds(std::string& _string, NodeData* _node)
+	void FOGS_Document::AddChilds(std::string& _string, NodeData* _node)
 	{
 		static std::string lv_Tabs = "\t";
 		if (!_node->m_Nodes)
@@ -80,7 +80,7 @@ namespace GameDataFormat
 			WriteChild(lv_Node, _string, lv_Tabs);
 	}
 
-	void GDF_Document::AddAttributes(std::string& _string, NodeData* _node)
+	void FOGS_Document::AddAttributes(std::string& _string, NodeData* _node)
 	{
 		if (!_node->m_Attributes)
 			return;
@@ -91,7 +91,7 @@ namespace GameDataFormat
 		_string += ')';
 	}
 
-	void GDF_Document::AddValue(std::string& _string, ValueData* _value)
+	void FOGS_Document::AddValue(std::string& _string, ValueData* _value)
 	{
 		for(auto lv_Val = _value->m_Values; lv_Val; lv_Val = lv_Val->Sibling)
 		{
@@ -101,7 +101,7 @@ namespace GameDataFormat
 		}
 	}
 
-	bool GDF_Document::SkipInConstant(char _Char)
+	bool FOGS_Document::SkipInConstant(char _Char)
 	{
 		return
 			_Char == '(' || _Char == ')' ||
@@ -111,9 +111,9 @@ namespace GameDataFormat
 			_Char == ',' || _Char == ';' ;
 	}
 
-	void GDF_Document::WriteValue(std::string& _string, ValueItem *_Val)
+	void FOGS_Document::WriteValue(std::string& _string, ValueItem *_Val)
 	{
-		GDF_ValueItem lv_Val = _Val;
+		FOGS_ValueItem lv_Val = _Val;
 
 		auto lv_Type = lv_Val.Type();
 
@@ -156,7 +156,7 @@ namespace GameDataFormat
 		}
 	}
 
-	void GDF_Document::WriteChild(NodeData * lv_Node, std::string& _string, std::string &_Tabs)
+	void FOGS_Document::WriteChild(NodeData * lv_Node, std::string& _string, std::string &_Tabs)
 	{
 		if (!lv_Node->m_Name && !lv_Node->m_Value && !lv_Node->m_Attributes)
 			return;
@@ -190,7 +190,7 @@ namespace GameDataFormat
 
 	}
 
-	void GDF_Document::WriteAttribute(AttributeData * lv_Attr, std::string& _string)
+	void FOGS_Document::WriteAttribute(AttributeData * lv_Attr, std::string& _string)
 	{
 		if (lv_Attr->m_Name)
 		{

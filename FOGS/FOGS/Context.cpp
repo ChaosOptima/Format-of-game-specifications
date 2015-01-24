@@ -5,26 +5,26 @@ namespace GameDataFormat
 {
 	Allocator<sizeof(Reader<IReader>)> ReaderAlloc;
 
-	GDF_Context::GDF_Context(const std::string& _data)
+	FOGS_Context::FOGS_Context(const std::string& _data)
 	{
 		m_Data = _data.c_str();
 		m_DataCar = m_Data;
 	}
 
 
-	void GDF_Context::PushReader(IReader* _reader)
+	void FOGS_Context::PushReader(IReader* _reader)
 	{
 		_reader->Priv = m_Readers;
 		m_Readers = _reader;
 	}
 
-	void GDF_Context::operator+=(IReader* _reader)
+	void FOGS_Context::operator+=(IReader* _reader)
 	{
 		PushReader(_reader);
 	}
 
 
-	void GDF_Context::PopReader()
+	void FOGS_Context::PopReader()
 	{
 		ASSERT_BREAK(m_Readers);
 		auto lv_Cur = m_Readers;
@@ -32,7 +32,7 @@ namespace GameDataFormat
 		ReaderAlloc.Free(lv_Cur);
 	}
 
-	bool GDF_Context::Read(const char* _val)
+	bool FOGS_Context::Read(const char* _val)
 	{
 		if (!m_Readers)
 			return false;
@@ -40,7 +40,7 @@ namespace GameDataFormat
 		return m_Readers->Read(_val);
 	}
 
-	void GDF_Context::UpdatePositionInf(const char* _char)
+	void FOGS_Context::UpdatePositionInf(const char* _char)
 	{
 		if (*_char == '\n')
 		{
@@ -53,7 +53,7 @@ namespace GameDataFormat
 		}
 	}
 
-	bool GDF_Context::GetReady()
+	bool FOGS_Context::GetReady()
 	{
 		for (; *m_DataCar; m_DataCar++)
 		{
@@ -69,17 +69,17 @@ namespace GameDataFormat
 		return false;
 	}
 
-	unsigned int GDF_Context::Line()
+	unsigned int FOGS_Context::Line()
 	{
 		return m_Line;
 	}
 
-	unsigned int GDF_Context::Char()
+	unsigned int FOGS_Context::Char()
 	{
 		return m_Char;
 	}
 
-	std::string GDF_Context::String()
+	std::string FOGS_Context::String()
 	{
 		int lv_size = m_DataCar - m_Data;
 		lv_size = lv_size > 10 ? 10 : lv_size;
@@ -89,7 +89,7 @@ namespace GameDataFormat
 		return m_String;
 	}
 
-	bool GDF_Context::Parse()
+	bool FOGS_Context::Parse()
 	{
 		for (; *m_DataCar; m_DataCar++)
 		{
@@ -116,7 +116,7 @@ namespace GameDataFormat
 		return !m_Readers;
 	}
 
-	bool GDF_Context::CheckComments()
+	bool FOGS_Context::CheckComments()
 	{
 		if (*(m_DataCar + 1))
 		{
@@ -155,7 +155,7 @@ namespace GameDataFormat
 		return false;			
 	}
 
-	bool GDF_Context::CanSkip(const char* _char)
+	bool FOGS_Context::CanSkip(const char* _char)
 	{
 		return		
 			*_char == ' ' ||
@@ -163,12 +163,12 @@ namespace GameDataFormat
 			*_char == '\t';
 	}
 
-	void GDF_Context::ReadAsString(bool _val)
+	void FOGS_Context::ReadAsString(bool _val)
 	{
 		m_InString = _val;
 	}
 
-	void GDF_Context::ReadAsMeta(bool _val)
+	void FOGS_Context::ReadAsMeta(bool _val)
 	{
 		m_InMeta = _val;
 	}

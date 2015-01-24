@@ -21,42 +21,42 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GDF\Attribute.cpp">
+    <ClCompile Include="FOGS\Attribute.cpp">
       <Filter>Header Files\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="GDF\Context.cpp">
+    <ClCompile Include="FOGS\Context.cpp">
       <Filter>Header Files\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="GDF\Document.cpp">
+    <ClCompile Include="FOGS\Document.cpp">
       <Filter>Header Files\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="GDF\Node.cpp">
+    <ClCompile Include="FOGS\Node.cpp">
       <Filter>Header Files\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="GDF\Value.cpp">
+    <ClCompile Include="FOGS\Value.cpp">
       <Filter>Header Files\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GDF\Allocator.h">
+    <ClInclude Include="FOGS\Allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GDF\Attribute.h">
+    <ClInclude Include="FOGS\Attribute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GDF\Context.h">
+    <ClInclude Include="FOGS\Context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GDF\Document.h">
+    <ClInclude Include="FOGS\Document.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GDF\GDF.h">
+    <ClInclude Include="FOGS\Node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GDF\Node.h">
+    <ClInclude Include="FOGS\Value.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GDF\Value.h">
+    <ClInclude Include="FOGS\FOGS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

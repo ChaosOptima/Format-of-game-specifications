@@ -8,7 +8,7 @@ namespace GameDataFormat
 	Allocator<sizeof(NodeData)> NodeAlloc;
 	Allocator<sizeof(AttributeData)> AttrAlloc;
 
-	NodeData::NodeData(GDF_Context* _context)
+	NodeData::NodeData(FOGS_Context* _context)
 	{
 		m_Context = _context;
 	}
@@ -274,22 +274,22 @@ namespace GameDataFormat
 
 //////////////////////////////////////////////////////////////////////////
 
-	GDF_Node::GDF_Node(NodeData* _data)
+	FOGS_Node::FOGS_Node(NodeData* _data)
 	{
 		m_Data = _data;
 	}
 
-	unsigned int GDF_Node::ChildsCount()
+	unsigned int FOGS_Node::ChildsCount()
 	{
 		return m_Data->m_NodesSize;
 	}
 
-	unsigned int GDF_Node::AttributesCount()
+	unsigned int FOGS_Node::AttributesCount()
 	{
 		return m_Data->m_AttrSize;
 	}
 
-	GDF_Node GDF_Node::Childe(const std::string& _key)
+	FOGS_Node FOGS_Node::Childe(const std::string& _key)
 	{
 	
 		for (auto lv_Node = m_Data->m_Nodes; lv_Node; lv_Node = lv_Node->m_Sibling)
@@ -301,17 +301,17 @@ namespace GameDataFormat
 		return 0;
 	}
 
-	GDF_Node GDF_Node::operator[](const std::string& _key)
+	FOGS_Node FOGS_Node::operator[](const std::string& _key)
 	{
 		return Childe(_key);
 	}
 
-	GameDataFormat::GDF_Node GDF_Node::operator[](const char* _key)
+	GameDataFormat::FOGS_Node FOGS_Node::operator[](const char* _key)
 	{
 		return Childe(std::string(_key));
 	}
 
-	GDF_Attribute GDF_Node::Attribute(const std::string& _key)
+	FOGS_Attribute FOGS_Node::Attribute(const std::string& _key)
 	{
 		for (auto lv_Attr = m_Data->m_Attributes; lv_Attr; lv_Attr = lv_Attr->m_Sibling)
 		{
@@ -322,22 +322,22 @@ namespace GameDataFormat
 		return 0;
 	}
 
-	GDF_Attribute GDF_Node::operator()(const std::string& _key)
+	FOGS_Attribute FOGS_Node::operator()(const std::string& _key)
 	{
 		return Attribute(_key);
 	}
 	
-	GDF_Node::operator bool()
+	FOGS_Node::operator bool()
 	{
 		return m_Data != 0;
 	}
 
-	bool GDF_Node::IsNull()
+	bool FOGS_Node::IsNull()
 	{
 		return m_Data == 0;
 	}
 
-	GDF_Value GDF_Node::Value()
+	FOGS_Value FOGS_Node::Value()
 	{
 		if (!m_Data->m_Value)
 		{
@@ -348,7 +348,7 @@ namespace GameDataFormat
 		return m_Data->m_Value;
 	}
 	
-	GDF_Node GDF_Node::Next()
+	FOGS_Node FOGS_Node::Next()
 	{
 		for (auto lv_Node = m_Data->m_Sibling; lv_Node; lv_Node = lv_Node->m_Sibling)
 		{
@@ -359,12 +359,12 @@ namespace GameDataFormat
 		return 0;
 	}
 
-	std::string GDF_Node::Name()
+	std::string FOGS_Node::Name()
 	{
 		return m_Data->m_Name;
 	}
 
-	GDF_Node& GDF_Node::Name(const std::string& _val)
+	FOGS_Node& FOGS_Node::Name(const std::string& _val)
 	{
 		auto lv_Size = _val.size();
 		if (!m_Data->ContextHolder)
@@ -377,7 +377,7 @@ namespace GameDataFormat
 		return *this;
 	}
 
-	GDF_Node& GDF_Node::Name(const char* _val)
+	FOGS_Node& FOGS_Node::Name(const char* _val)
 	{
 		auto lv_Size = strlen(_val);
 		if (!m_Data->ContextHolder)
@@ -390,7 +390,7 @@ namespace GameDataFormat
 		return *this;
 	}
 
-	GDF_Node GDF_Node::AppendChild()
+	FOGS_Node FOGS_Node::AppendChild()
 	{
 		NodeData* lv_Node = new NODE_ALLOC NodeData(0);
 		lv_Node->m_Parent = m_Data;
@@ -400,21 +400,21 @@ namespace GameDataFormat
 		return lv_Node;
 	}
 
-	GDF_Node GDF_Node::AppendChild(const char* _name)
+	FOGS_Node FOGS_Node::AppendChild(const char* _name)
 	{
-		GDF_Node lv_Node = AppendChild();
+		FOGS_Node lv_Node = AppendChild();
 		lv_Node.Name(_name);
 		return lv_Node;
 	}
 
-	GDF_Node GDF_Node::AppendChild(const std::string& _name)
+	FOGS_Node FOGS_Node::AppendChild(const std::string& _name)
 	{
-		GDF_Node lv_Node = AppendChild();
+		FOGS_Node lv_Node = AppendChild();
 		lv_Node.Name(_name);
 		return lv_Node;
 	}
 
-	GDF_Attribute GDF_Node::AppendAttribute()
+	FOGS_Attribute FOGS_Node::AppendAttribute()
 	{
 		auto lv_Attr = new ATTR_ALLOC  AttributeData(0);
 		lv_Attr->m_Parent = m_Data;
@@ -424,19 +424,19 @@ namespace GameDataFormat
 		return lv_Attr;
 	}
 
-	GDF_Attribute GDF_Node::AppendAttribute(const char* _name)
+	FOGS_Attribute FOGS_Node::AppendAttribute(const char* _name)
 	{
 		return AppendAttribute().Name(_name);
 	}
 
-	GDF_Attribute GDF_Node::AppendAttribute(const std::string& _name)
+	FOGS_Attribute FOGS_Node::AppendAttribute(const std::string& _name)
 	{
 		return AppendAttribute().Name(_name);
 	}
 
-	std::list<GDF_Node> GDF_Node::Childs()
+	std::list<FOGS_Node> FOGS_Node::Childs()
 	{
-		std::list<GDF_Node> lv_Val;
+		std::list<FOGS_Node> lv_Val;
 
 		for (auto lv_Node = m_Data->m_Nodes; lv_Node; lv_Node = lv_Node->m_Sibling)
 			lv_Val.push_back(lv_Node);
@@ -444,14 +444,14 @@ namespace GameDataFormat
 		return lv_Val;
 	}
 
-	std::list<GDF_Node> GDF_Node::Childs(const char* _name)
+	std::list<FOGS_Node> FOGS_Node::Childs(const char* _name)
 	{
 		return Childs(std::string(_name));
 	}
 
-	std::list<GDF_Node> GDF_Node::Childs(const std::string& _name)
+	std::list<FOGS_Node> FOGS_Node::Childs(const std::string& _name)
 	{
-		std::list<GDF_Node> lv_Val;
+		std::list<FOGS_Node> lv_Val;
 
 		for (auto lv_Node = m_Data->m_Nodes; lv_Node; lv_Node = lv_Node->m_Sibling)
 			if (lv_Node->m_Name == _name)
@@ -460,23 +460,23 @@ namespace GameDataFormat
 		return lv_Val;
 	}
 
-	std::list<GDF_Attribute> GDF_Node::Attributes()
+	std::list<FOGS_Attribute> FOGS_Node::Attributes()
 	{
-		std::list<GDF_Attribute> lv_Val;
+		std::list<FOGS_Attribute> lv_Val;
 		for (auto lv_Attr = m_Data->m_Attributes; lv_Attr; lv_Attr = lv_Attr->m_Sibling)
 			lv_Val.push_back(lv_Attr);
 
 		return lv_Val;
 	}
 
-	std::list<GDF_Attribute> GDF_Node::Attributes(const char* _name)
+	std::list<FOGS_Attribute> FOGS_Node::Attributes(const char* _name)
 	{
 		return Attributes(std::string(_name));
 	}
 
-	std::list<GDF_Attribute> GDF_Node::Attributes(const std::string& _name)
+	std::list<FOGS_Attribute> FOGS_Node::Attributes(const std::string& _name)
 	{
-		std::list<GDF_Attribute> lv_Val;
+		std::list<FOGS_Attribute> lv_Val;
 		for (auto lv_Attr = m_Data->m_Attributes; lv_Attr; lv_Attr = lv_Attr->m_Sibling)
 			if (lv_Attr->m_Name == _name)
 				lv_Val.push_back(lv_Attr);
@@ -484,62 +484,62 @@ namespace GameDataFormat
 		return lv_Val;
 	}
 
-	std::map<std::string, std::list<GDF_Node>> GDF_Node::MapChilds()
+	std::map<std::string, std::list<FOGS_Node>> FOGS_Node::MapChilds()
 	{
-		std::map<std::string, std::list<GDF_Node>> lv_Map;
+		std::map<std::string, std::list<FOGS_Node>> lv_Map;
 		for (auto lv_Node = m_Data->m_Nodes; lv_Node; lv_Node = lv_Node->m_Sibling)
 			lv_Map[lv_Node->m_Name].push_back(lv_Node);
 		
 		return lv_Map;
 	}
 
-	std::map<std::string, std::list<GDF_Attribute>> GDF_Node::MapAttributes()
+	std::map<std::string, std::list<FOGS_Attribute>> FOGS_Node::MapAttributes()
 	{
-		std::map<std::string, std::list<GDF_Attribute>> lv_Map;
+		std::map<std::string, std::list<FOGS_Attribute>> lv_Map;
 		for (auto lv_Attr = m_Data->m_Attributes; lv_Attr; lv_Attr = lv_Attr->m_Sibling)
 			lv_Map[lv_Attr->m_Name].push_back(lv_Attr);
 
 		return lv_Map;
 	}
 
-	GDF_Node::Iterator GDF_Node::begin()
+	FOGS_Node::Iterator FOGS_Node::begin()
 	{
 		return m_Data->m_Nodes;
 	}
 
-	GDF_Node::Iterator GDF_Node::end()
+	FOGS_Node::Iterator FOGS_Node::end()
 	{
 		return 0;
 	}
 
 
-	GDF_Node::Iterator::Iterator(NodeData* _root)
+	FOGS_Node::Iterator::Iterator(NodeData* _root)
 	{
 		m_Root = _root;
 	}
 
-	GameDataFormat::GDF_Node GDF_Node::Iterator::operator*() const
+	GameDataFormat::FOGS_Node FOGS_Node::Iterator::operator*() const
 	{
 		return m_Root;
 	}
 
-	GDF_Node::Iterator& GDF_Node::Iterator::operator++()
+	FOGS_Node::Iterator& FOGS_Node::Iterator::operator++()
 	{
 		m_Root = m_Root->m_Sibling;
 		return *this;
 	}
 
-	bool GDF_Node::Iterator::operator!=(const Iterator& _rval)
+	bool FOGS_Node::Iterator::operator!=(const Iterator& _rval)
 	{
 		return m_Root != _rval.m_Root;
 	}
 
-	GDF_Node::Iterator begin(GDF_Node& _val)
+	FOGS_Node::Iterator begin(FOGS_Node& _val)
 	{
 		return _val.begin();
 	}
 
-	GDF_Node::Iterator end(GDF_Node& _val)
+	FOGS_Node::Iterator end(FOGS_Node& _val)
 	{
 		return _val.end();
 	}

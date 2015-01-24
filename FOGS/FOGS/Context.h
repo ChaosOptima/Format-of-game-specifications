@@ -34,12 +34,12 @@ namespace GameDataFormat
 
 	extern Allocator<sizeof(Reader<IReader>)> ReaderAlloc;
 
-	class GDF_Context
+	class FOGS_Context
 	{
 	public:
 		//typedef std::function<bool(char)> Reader;
 
-		GDF_Context(const std::string& _data);
+		FOGS_Context(const std::string& _data);
 
 		void operator+=(IReader* _reader);
 
