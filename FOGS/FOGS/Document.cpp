@@ -2,7 +2,7 @@
 #include "Context.h"
 
 
-namespace GameDataFormat
+namespace FOGS
 {
 
 	FOGS_Document::FOGS_Document()

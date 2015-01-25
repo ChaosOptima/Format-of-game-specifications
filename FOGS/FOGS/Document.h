@@ -2,7 +2,7 @@
 #include <string>
 #include "Node.h"
 
-namespace GameDataFormat
+namespace FOGS
 {
 	struct NodeData;
 

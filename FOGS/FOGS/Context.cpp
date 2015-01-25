@@ -1,7 +1,7 @@
 #include "Context.h"
 #include "Value.h"
 
-namespace GameDataFormat
+namespace FOGS
 {
 	Allocator<sizeof(Reader<IReader>)> ReaderAlloc;
 

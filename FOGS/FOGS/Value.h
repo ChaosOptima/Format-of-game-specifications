@@ -46,7 +46,7 @@
 #endif // DEBUG
 
 
-namespace GameDataFormat
+namespace FOGS
 {
 	class FOGS_Context;
 	struct NodeData;

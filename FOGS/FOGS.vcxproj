@@ -90,6 +90,8 @@
     <ClInclude Include="FOGS\Context.h" />
     <ClInclude Include="FOGS\Document.h" />
     <ClInclude Include="FOGS\Node.h" />
+    <ClInclude Include="FOGS\Serialize.h" />
+    <ClInclude Include="FOGS\Tools.h" />
     <ClInclude Include="FOGS\Value.h" />
     <ClInclude Include="FOGS\Attribute.h" />
   </ItemGroup>

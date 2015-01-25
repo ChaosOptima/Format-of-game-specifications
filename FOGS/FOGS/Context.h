@@ -4,7 +4,7 @@
 #include <memory>
 #include "Allocator.h"
 
-namespace GameDataFormat
+namespace FOGS
 {
 	struct IReader
 	{

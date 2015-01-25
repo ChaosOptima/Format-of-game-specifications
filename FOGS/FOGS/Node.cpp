@@ -3,7 +3,7 @@
 #include "Context.h"
 #include "Allocator.h"
 
-namespace GameDataFormat
+namespace FOGS
 {
 	Allocator<sizeof(NodeData)> NodeAlloc;
 	Allocator<sizeof(AttributeData)> AttrAlloc;
@@ -306,7 +306,7 @@ namespace GameDataFormat
 		return Childe(_key);
 	}
 
-	GameDataFormat::FOGS_Node FOGS_Node::operator[](const char* _key)
+	FOGS::FOGS_Node FOGS_Node::operator[](const char* _key)
 	{
 		return Childe(std::string(_key));
 	}
@@ -371,6 +371,12 @@ namespace GameDataFormat
 			delete m_Data->m_Name;
 		m_Data->ContextHolder = false;
 
+		if (_val.empty())
+		{
+			m_Data->m_Name = 0;
+			return *this;
+		}
+
 		m_Data->m_Name = new char[lv_Size + 1];
 		m_Data->m_Name[lv_Size] = 0;
 		memcpy(m_Data->m_Name, _val.c_str(), lv_Size);
@@ -384,6 +390,12 @@ namespace GameDataFormat
 			delete m_Data->m_Name;
 		m_Data->ContextHolder = false;
 
+		if (_val)
+		{
+			m_Data->m_Name = 0;
+			return *this;
+		}
+
 		m_Data->m_Name = new char[lv_Size + 1];
 		m_Data->m_Name[lv_Size] = 0;
 		memcpy(m_Data->m_Name, _val, lv_Size);
@@ -394,9 +406,7 @@ namespace GameDataFormat
 	{
 		NodeData* lv_Node = new NODE_ALLOC NodeData(0);
 		lv_Node->m_Parent = m_Data;
-		lv_Node->m_Sibling = m_Data->m_Nodes;
-		m_Data->m_Nodes = lv_Node;
-		m_Data->m_NodesSize++;
+		lv_Node->AppendNode();
 		return lv_Node;
 	}
 
@@ -518,7 +528,7 @@ namespace GameDataFormat
 		m_Root = _root;
 	}
 
-	GameDataFormat::FOGS_Node FOGS_Node::Iterator::operator*() const
+	FOGS::FOGS_Node FOGS_Node::Iterator::operator*() const
 	{
 		return m_Root;
 	}

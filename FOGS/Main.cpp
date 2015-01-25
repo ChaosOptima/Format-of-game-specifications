@@ -3,7 +3,7 @@
 #include "FOGS/FOGS.h"
 
 using namespace std;
-using namespace GameDataFormat;
+using namespace FOGS;
 
 void TestFile()
 {
@@ -33,50 +33,98 @@ void TestFile()
 	}
 }
 
+class Ins : public Serializable < FOGS_Node >
+{
+	float x = 20;
+	float y = 523;
+	float z = 12;
+
+	serialize(x);
+	serialize(y);
+	serialize(z);
+};
+
+
+class SerTest : public Serializable < FOGS_Node >
+{
+	int i = 10;
+	float j = 5;
+
+	list<Ins*> List;
+
+	serialize(List);
+	serialize(j);
+	serialize(i);
+	
+public:
+	SerTest()
+	{
+		for (int i = 0; i < 5; i++)
+			List.push_back(new Ins());
+	}
+};
 
 void FillTest()
 {
 	FOGS_Document lv_doc;
 	auto lv_Root = lv_doc.Root();
-	for (int i = 0; i < 20; i++)
+
 	{
-		auto lv_Ch = lv_Root.AppendChild().Name("ololo");
-		{
-			lv_Ch.AppendAttribute().Name("Id").Value() = i;
-
-			lv_Ch.Value() += 666;
-			lv_Ch.Value() += 42.2f;
-			lv_Ch.Value().AppendItem().SetString("ya\n.ru").Lable("url");
-
-			lv_Ch.AppendChild().Value() = 13;
-			lv_Ch.AppendChild().Value() = 42.2f;
-			lv_Ch.AppendChild().Value().Item().SetConstant("url[ya.ru]");
-		}
-
-		auto lv_at = lv_Ch.AppendAttribute().Name("atrasd");
-		{
-			lv_at.Value() += 10;
-			lv_at.Value() += 4.55f;
-			lv_at.Value() += "Array";
-		}		
+		SerTest lv_Test;
+		lv_Test.Serialize(lv_Root);
 	}
 
 	string lv_Str;
 	lv_Str = lv_doc.Save();
+	cout << lv_Str;
+
+	{
+		SerTest lv_Test2;
+		lv_Test2.Deserialize(lv_Root);
+
+		cout << "\n";
+	}
+
+
+	
 	FILE* lv_File;
 	fopen_s(&lv_File, "../Out2.txt", "w");
 	fwrite(lv_Str.c_str(), lv_Str.length(), 1, lv_File);
 	fclose(lv_File);
-	cout << lv_Str;
+	
 	
 }
 
 
+
+
 void main()
 {
+	auto lv_Test = FOGS::CreateOverloaded
+		(
+			[](int)
+			{
+				cout << "int\n";
+			},
+			[](float)
+			{
+				cout << "float\n";
+			},
+			[](...)
+			{
+				cout << "...\n";
+			}
+		);
+
+	lv_Test(1);
+	lv_Test(1.0f);
+	lv_Test("asd");
+	
+
+
 	_CheckLeaks;
 
-	TestFile();
+	//TestFile();
 	FillTest();
 
 	cin.ignore();

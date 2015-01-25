@@ -1,7 +1,7 @@
 #pragma once
 #include "Value.h"
 
-namespace GameDataFormat
+namespace FOGS
 {
 	class FOGS_Context;
 	struct NodeData;

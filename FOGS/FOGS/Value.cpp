@@ -7,7 +7,7 @@
 
 
 
-namespace GameDataFormat
+namespace FOGS
 {
 	Allocator<sizeof(ValueItem)> ValueItemAlloc;
 	Allocator<sizeof(ValueData)> ValueDataAlloc;
@@ -305,7 +305,7 @@ namespace GameDataFormat
 		return m_Data->m_Values;
 	}
 
-	GameDataFormat::FOGS_ValueItem FOGS_Value::Item(int _ind)
+	FOGS::FOGS_ValueItem FOGS_Value::Item(int _ind)
 	{
 		auto lv_Val = m_Data->m_Values;
 		for (int i = 0; lv_Val && i < _ind; i++)
@@ -319,7 +319,7 @@ namespace GameDataFormat
 		return m_Data->m_ValueSize;
 	}
 
-	GameDataFormat::FOGS_ValueItem FOGS_Value::operator[](int _ind)
+	FOGS::FOGS_ValueItem FOGS_Value::operator[](int _ind)
 	{
 		return Item(_ind);
 	}

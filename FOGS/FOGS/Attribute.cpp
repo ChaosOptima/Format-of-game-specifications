@@ -4,7 +4,7 @@
 
 
 
-namespace GameDataFormat
+namespace FOGS
 {
 	AttributeData::AttributeData(FOGS_Context* _context)
 	{
@@ -192,6 +192,12 @@ namespace GameDataFormat
 			delete m_Data->m_Name;
 		m_Data->ContextHolder = false;
 
+		if (_val.empty())
+		{
+			m_Data->m_Name = 0;
+			return *this;
+		}
+
 		m_Data->m_Name = new char[lv_Size + 1];
 		m_Data->m_Name[lv_Size] = 0;
 		memcpy(m_Data->m_Name, _val.c_str(), lv_Size);
@@ -205,6 +211,12 @@ namespace GameDataFormat
 		if (!m_Data->ContextHolder)
 			delete m_Data->m_Name;
 		m_Data->ContextHolder = false;
+
+		if (!_val)
+		{
+			m_Data->m_Name = 0;
+			return *this;
+		}
 
 		m_Data->m_Name = new char[lv_Size + 1];
 		m_Data->m_Name[lv_Size] = 0;

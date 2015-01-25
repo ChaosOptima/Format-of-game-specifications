@@ -4,7 +4,7 @@
 #include "Value.h"
 #include "Attribute.h"
 
-namespace GameDataFormat
+namespace FOGS
 {
 	class FOGS_Context;
 	

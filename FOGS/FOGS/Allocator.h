@@ -9,7 +9,7 @@
 
 //#define LEACK_DEBUG
 
-namespace GameDataFormat
+namespace FOGS
 {
 	template< int Size >
 	class Allocator
