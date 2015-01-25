@@ -64,7 +64,7 @@ public:
 	}
 };
 
-void FillTest()
+void FillTest() 
 {
 	FOGS_Document lv_doc;
 	auto lv_Root = lv_doc.Root();
@@ -85,7 +85,7 @@ void FillTest()
 		cout << "\n";
 	}
 
-
+	 
 	
 	FILE* lv_File;
 	fopen_s(&lv_File, "../Out2.txt", "w");

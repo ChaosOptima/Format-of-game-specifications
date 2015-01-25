@@ -196,10 +196,10 @@ namespace FOGS
 	void DeserializeList(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, Serializable<FOGS_Node>*)
 	{
 		for (auto lv_Item : *_val)
-			delete lv_Item;
+			delete lv_Item;  
 		_val->clear();
 
-		for (int i = 0; i < _node.ChildsCount(); i++)
+		for (unsigned int i = 0; i < _node.ChildsCount(); i++)
 		{
 			T lv_Tmp = new ClearType<T>::Type();
 			Deserialize("", lv_Tmp, _node[std::to_string(i)], lv_Tmp);
