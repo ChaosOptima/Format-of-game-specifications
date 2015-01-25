@@ -6,6 +6,13 @@
 
 namespace FOGS
 {
+	class NoCopyConstruct
+	{
+		NoCopyConstruct(const NoCopyConstruct&) = delete;
+		NoCopyConstruct(const NoCopyConstruct&&) = delete;
+	public:
+		NoCopyConstruct(char){};
+	};
 	
 
 	template<class Container>
@@ -23,8 +30,8 @@ namespace FOGS
 		Container* ContainerInf = 0;
 
 		Serializable() = default;
-		Serializable(Serializable&){};
-		Serializable& operator=(Serializable&){};
+		Serializable(const Serializable&){};
+		Serializable& operator=(const Serializable&){ return *this; };
 		~Serializable() = default;
 
 		char Add(std::string _key, Func _serializer, Func _deserializer)
@@ -69,8 +76,8 @@ namespace FOGS
 		FOGS_Node* ContainerInf = 0;
 
 		Serializable() = default;
-		Serializable(Serializable&){};
-		Serializable& operator=(Serializable&){};
+		Serializable(const Serializable&){};
+		Serializable& operator=(const Serializable&){ return *this; };
 		~Serializable() = default;
 
 		char Add(std::string _key, Func _serializer, Func _deserializer)
@@ -137,7 +144,7 @@ namespace FOGS
 	{
 		auto lv_Node = _node.AppendChild().Name(_key);
 		for (auto lv_Val : *_val)
-			Serialize(lv_Val.first, &lv_Val.second, lv_Node);
+			Serialize(lv_Val.first, &lv_Val.second, lv_Node, (T*)0);
 	}
 
 	template<class T>
@@ -146,22 +153,21 @@ namespace FOGS
 		_val->clear();
 
 		for (auto lv_Val : _node.Childs())
-			Deserialize(lv_Val.Name(), &(*_val)[lv_Val.Name()], lv_Node);
+			Deserialize(lv_Val.Name(), &(*_val)[lv_Val.Name()], lv_Val, (T*)0);
 	}
 
 	template<class T>
 	void Serialize(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, ...)
 	{
 		auto lv_Node = _node.AppendChild().Name(_key);
-		const char lv_Lable[sizeof(T)] = { 0 };
-		SerializeList(_key, _val, lv_Node, *((T*)lv_Lable));
+		SerializeList(_key, _val, lv_Node, (T*)0);
 	}
 
 	template<class T>
 	void Deserialize(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, ...)
 	{
 		const char lv_Lable[sizeof(T)] = { 0 };
-		DeserializeList(_key, _val, _node, *((T*)lv_Lable));
+		DeserializeList(_key, _val, _node, (T*)0);
 	}
 
 
@@ -180,7 +186,7 @@ namespace FOGS
 	{
 		_val->clear();
 
-		for (auto lv_Val : _node.Value().Items())
+		for (auto& lv_Val : _node.Value().Items())
 			_val->push_back(lv_Val);
 	}
 
@@ -188,21 +194,19 @@ namespace FOGS
 	void SerializeList(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, Serializable<FOGS_Node>*)
 	{
 		int i = 0;
-		for (auto lv_Val : *_val)
-			Serialize(std::to_string(i++), lv_Val, _node, lv_Val);
+		for (auto& lv_Val : *_val)
+			Serialize(std::to_string(i++), &lv_Val, _node, &lv_Val);
 	}
 
 	template<class T>
 	void DeserializeList(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, Serializable<FOGS_Node>*)
 	{
-		for (auto lv_Item : *_val)
-			delete lv_Item;  
 		_val->clear();
 
 		for (unsigned int i = 0; i < _node.ChildsCount(); i++)
 		{
-			T lv_Tmp = new ClearType<T>::Type();
-			Deserialize("", lv_Tmp, _node[std::to_string(i)], lv_Tmp);
+			T lv_Tmp = T();
+			Deserialize("", &lv_Tmp, _node[std::to_string(i)], &lv_Tmp);
 			_val->push_back(lv_Tmp);
 		}
 	}
@@ -211,15 +215,14 @@ namespace FOGS
 	void Serialize(const std::string& _key, std::vector<T>* _val, FOGS_Node& _node, ...)
 	{
 		auto lv_Node = _node.AppendChild().Name(_key);
-		const char lv_Lable[sizeof(T)] = { 0 };
-		SerializeVector(_key, _val, lv_Node, *((T*)lv_Lable));
+		SerializeVector(_key, _val, lv_Node, (T)0);
 	}
 
 	template<class T>
 	void Deserialize(const std::string& _key, std::vector<T>* _val, FOGS_Node& _node, ...)
 	{
 		const char lv_Lable[sizeof(T)] = { 0 };
-		DeserializeVector(_key, _val, _node, *((T*)lv_Lable));
+		DeserializeVector(_key, _val, _node, (T*)0);
 	}
 
 
@@ -228,7 +231,7 @@ namespace FOGS
 	{
 		auto lv_Node = _node.AppendChild().Name(_key);
 
-		for (auto lv_Val : *_val)
+		for (auto& lv_Val : *_val)
 			lv_Node.Value() += _val;
 	}
 
@@ -238,7 +241,7 @@ namespace FOGS
 		_val->clear();
 		_val->resize(_node.Value().ItemsCount());
 
-		for (auto lv_Val : _node.Value().Items())
+		for (auto& lv_Val : _node.Value().Items())
 			_val->push_back(lv_Val);
 	}
 
@@ -249,23 +252,18 @@ namespace FOGS
 	{
 		int i = 0;
 		for (auto lv_Val : *_val)
-			Serialize(std::to_string(i++), lv_Val, _node, lv_Val);
+			Serialize(std::to_string(i++), &lv_Val, _node, &lv_Val);
 	}
 
 	template<class T>
 	void DeserializeVector(const std::string& _key, std::vector<T>* _val, FOGS_Node& _node, Serializable<FOGS_Node>*)
 	{
-		for (auto lv_Item : *_val)
-			delete lv_Item;
 		_val->clear();
 		_val->resize(_node.ChildsCount());
 
 		for (int i = 0; i < _node.ChildsCount(); i++)
-		{
-			T lv_Tmp = new ClearType<T>::Type();
-			Deserialize("", lv_Tmp, _node[std::to_string(i)], lv_Tmp);
-			_val->push_back(lv_Tmp);
-		}
+			Deserialize("", &_val[i], _node[std::to_string(i)], &_val[i]);
+		
 	}
 
 }
@@ -277,7 +275,7 @@ namespace FOGS
 #define UNNAMED_DECL(x, y) UNNAMED_IMPL(x, y)
 #define UNNAMED UNNAMED_DECL(__LINE__ , __COUNTER__)
 
-#define serialize(x) char UNNAMED = Add																	\
+#define serialize(x) NoCopyConstruct UNNAMED = Add																	\
 (																										\
 	#x,																									\
 	[this](const string& _key, ClearType<decltype(ContainerInf)>::Type& _cont)							\
@@ -290,9 +288,3 @@ namespace FOGS
 		::Deserialize(_key, &x, _cont, (ClearType<decltype(x)>::Type*)0);								\
 	}																									\
 )
-
-
-
-
-
-

@@ -42,6 +42,14 @@ class Ins : public Serializable < FOGS_Node >
 	serialize(x);
 	serialize(y);
 	serialize(z);
+public:
+	Ins() = default;
+	Ins(const Ins& _right)
+	{
+		x = _right.x;
+		y = _right.y;
+		z = _right.z;
+	};
 };
 
 
@@ -50,8 +58,10 @@ class SerTest : public Serializable < FOGS_Node >
 	int i = 10;
 	float j = 5;
 
-	list<Ins*> List;
+	list<Ins> List;
+	map<string, Ins> Map;
 
+	serialize(Map);
 	serialize(List);
 	serialize(j);
 	serialize(i);
@@ -60,7 +70,10 @@ public:
 	SerTest()
 	{
 		for (int i = 0; i < 5; i++)
-			List.push_back(new Ins());
+		{
+			List.push_back(Ins());
+			Map["Item-" + to_string(i)] = Ins();
+		}
 	}
 };
 
@@ -85,7 +98,8 @@ void FillTest()
 		cout << "\n";
 	}
 
-	 
+	
+
 	
 	FILE* lv_File;
 	fopen_s(&lv_File, "../Out2.txt", "w");
