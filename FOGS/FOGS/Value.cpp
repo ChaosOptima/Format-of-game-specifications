@@ -503,7 +503,7 @@ namespace FOGS
 	FOGS_ValueItem& FOGS_ValueItem::operator=(bool _val)
 	{
 		m_Data->Type = VT_BOOL;
-		m_Data->AsDouble = _val;
+		m_Data->AsBool = _val;
 		return *this;
 	}
 

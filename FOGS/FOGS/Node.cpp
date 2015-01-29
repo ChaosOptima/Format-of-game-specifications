@@ -390,7 +390,7 @@ namespace FOGS
 			delete m_Data->m_Name;
 		m_Data->ContextHolder = false;
 
-		if (_val)
+		if (!_val)
 		{
 			m_Data->m_Name = 0;
 			return *this;
