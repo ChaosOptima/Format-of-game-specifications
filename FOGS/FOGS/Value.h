@@ -49,8 +49,8 @@
 namespace FOGS
 {
 	class FOGS_Context;
-	struct NodeData;
-	struct AttributeData;
+	struct Node_impl;
+	struct Attribute_impl;
 
 	enum ValueType
 	{
@@ -63,7 +63,7 @@ namespace FOGS
 		VT_META,
 	};
 
-	struct ValueItem
+	struct ValueItem_impl
 	{
 		char* Lable = 0;
 		char* String = 0;
@@ -75,52 +75,52 @@ namespace FOGS
 		bool ContexHolder = true;
 
 		ValueType Type = VT_NON;
-		ValueItem* Sibling = 0;
+		ValueItem_impl* Sibling = 0;
 
 		void FreeStrings();
-		~ValueItem();
+		~ValueItem_impl();
 	};
 
-	struct ValueData
+	struct ValueData_impl
 	{
-		ValueData(FOGS_Context* _context);
-		~ValueData();
+		ValueData_impl(FOGS_Context* _context);
+		~ValueData_impl();
 
 		void ReadValue();
 		void ReadValue(char* _lable);
 		bool IsUnexpacted(char* _char);
 		bool ReadString();
 		bool ReadMeta();
-		ValueItem* AddItem();
+		ValueItem_impl* AddItem();
 		
 		bool ValueReader(char* _char);
 		bool StringReader(char* _char);
 		bool MetaReader(char* _char);
 
-		ValueItem* m_Values = 0;
-		ValueItem* m_LastVal = 0;
+		ValueItem_impl* m_Values = 0;
+		ValueItem_impl* m_LastVal = 0;
 		unsigned int m_ValueSize = 0;
 
-		NodeData* m_Node = 0;
-		AttributeData* m_Attribute = 0;
+		Node_impl* m_Node = 0;
+		Attribute_impl* m_Attribute = 0;
 		FOGS_Context* m_Context = 0;
-		ValueItem* m_CurrentValue = 0;
+		ValueItem_impl* m_CurrentValue = 0;
 		bool m_IgnorNext = false;
 		bool m_ValueReady = false;
 		char* m_End = 0;
 	
 	};
 
-	extern Allocator<sizeof(ValueItem)> ValueItemAlloc;
-	extern Allocator<sizeof(ValueData)> ValueDataAlloc;
+	extern Allocator<sizeof(ValueItem_impl)> ValueItemAlloc;
+	extern Allocator<sizeof(ValueData_impl)> ValueDataAlloc;
 
-	class FOGS_ValueItem
+	class ValueItem
 	{
 	public:
-		FOGS_ValueItem(ValueItem* _data);
+		ValueItem(ValueItem_impl* _data);
 
 		std::string Lable();
-		FOGS_ValueItem& Lable(const std::string& _val);
+		ValueItem& Lable(const std::string& _val);
 
 		ValueType Type();
 
@@ -129,20 +129,20 @@ namespace FOGS
 		long long AsInt();
 		bool AsBool();
 
-		FOGS_ValueItem& SetConstant(const std::string& _val);
-		FOGS_ValueItem& SetString(const std::string& _val);
-		FOGS_ValueItem& SetInt(long long _val);
-		FOGS_ValueItem& SetFloat(long double _val);
-		FOGS_ValueItem& SetBool(long long _val);
+		ValueItem& SetConstant(const std::string& _val);
+		ValueItem& SetString(const std::string& _val);
+		ValueItem& SetInt(long long _val);
+		ValueItem& SetFloat(long double _val);
+		ValueItem& SetBool(long long _val);
 		
-		FOGS_ValueItem& operator = (int _val);
-		FOGS_ValueItem& operator = (long long _val);
-		FOGS_ValueItem& operator = (float _val);
-		FOGS_ValueItem& operator = (double _val);
-		FOGS_ValueItem& operator = (long double _val);
-		FOGS_ValueItem& operator = (bool _val);
-		FOGS_ValueItem& operator = (const std::string& _val);
-		FOGS_ValueItem& operator = (const char* _val);
+		ValueItem& operator = (int _val);
+		ValueItem& operator = (long long _val);
+		ValueItem& operator = (float _val);
+		ValueItem& operator = (double _val);
+		ValueItem& operator = (long double _val);
+		ValueItem& operator = (bool _val);
+		ValueItem& operator = (const std::string& _val);
+		ValueItem& operator = (const char* _val);
 		
 		operator int();
 		operator unsigned int();
@@ -157,46 +157,52 @@ namespace FOGS
 		operator std::string();
 
 	private:
-		ValueItem* m_Data = 0;
+		ValueItem_impl* m_Data = 0;
 	};
 
-	class FOGS_Value
+	class ValueData
 	{
 	public:
-		FOGS_Value(ValueData* _data);
+		ValueData(ValueData_impl* _data);
 
 		bool IsArray();
 		bool IsEmpty();
 
 		unsigned int ItemsCount();
-		FOGS_ValueItem Item();
-		FOGS_ValueItem Item(int _ind);
-		FOGS_ValueItem AppendItem();
-		std::vector<FOGS_ValueItem> Items();
+		ValueItem Item();
+		ValueItem Item(int _ind);
+		ValueItem AppendItem();
+		std::vector<ValueItem> Items();
 
 		operator bool();
-		operator FOGS_ValueItem();
-		FOGS_ValueItem operator[](int _ind);
-		FOGS_ValueItem operator*();
+		operator ValueItem();
+		ValueItem operator[](int _ind);
+		ValueItem operator*();
 
 		template<class T>
-		FOGS_ValueItem operator+=(T _val)
+		ValueData& operator+=(T _val)
 		{
 			auto lv_Item = AppendItem();
 			lv_Item = _val;
-			return lv_Item;
+			return *this;
 		}
 
 		template<class T>
-		FOGS_ValueItem operator=(T _val)
+		ValueData& operator=(T _val)
 		{
 			auto lv_Item = Item();
 			lv_Item = _val;
-			return lv_Item;
+			return *this;
 		}
 
 	private:
-		ValueData* m_Data = 0;
+		ValueData_impl* m_Data = 0;
 	};
+
+	template<class T>
+	ValueData& operator,(ValueData& _val, T _rh)
+	{
+		return _val += _rh;
+	}
 
 }

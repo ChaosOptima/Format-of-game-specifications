@@ -4,13 +4,13 @@
 namespace FOGS
 {
 	class FOGS_Context;
-	struct NodeData;
-	struct ValueData;
+	struct Node_impl;
+	struct ValueData_impl;
 
-	struct AttributeData
+	struct Attribute_impl
 	{
-		AttributeData(FOGS_Context* _context);
-		~AttributeData();
+		Attribute_impl(FOGS_Context* _context);
+		~Attribute_impl();
 
 		void ReadName();
 		void NameToValue();
@@ -22,27 +22,27 @@ namespace FOGS
 		char* m_Name = 0;
 		char* m_End = 0;
 
-		AttributeData* m_Sibling = 0;
+		Attribute_impl* m_Sibling = 0;
 		FOGS_Context* m_Context = 0;
-		NodeData* m_Parent = 0;
-		ValueData* m_Value = 0;
+		Node_impl* m_Parent = 0;
+		ValueData_impl* m_Value = 0;
 		bool m_EndName = false;
 		bool ContextHolder = true;
 	};
 
-	class FOGS_Attribute
+	class Attribute
 	{
 	public:
-		FOGS_Attribute(AttributeData* _data);
+		Attribute(Attribute_impl* _data);
 
 		std::string Name();
-		FOGS_Attribute& Name(const std::string& _val);
-		FOGS_Attribute& Name(const char* _val);
-		FOGS_Value Value();
+		Attribute& Name(const std::string& _val);
+		Attribute& Name(const char* _val);
+		ValueData Value();
 		bool IsNull();
 
 		operator bool();
 	private:
-		AttributeData* m_Data = 0;
+		Attribute_impl* m_Data = 0;
 	};
 }

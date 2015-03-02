@@ -17,7 +17,7 @@ namespace FOGS
 		if (!lv_Context.GetReady())
 			return false;
 		
-		m_Root = new NodeData(&lv_Context);
+		m_Root = new Node_impl(&lv_Context);
 		m_Root->ReadNodes();
 
 		if (lv_Context.Parse())
@@ -46,10 +46,10 @@ namespace FOGS
 		return "";// m_ErrorString;
 	}
 
-	FOGS_Node FOGS_Document::Root()
+	Node FOGS_Document::Root()
 	{
 		if (!m_Root)
-			m_Root = new NodeData(0);
+			m_Root = new Node_impl(0);
 
 		return m_Root;
 	}
@@ -70,7 +70,7 @@ namespace FOGS
 		return lv_Out;
 	}
 
-	void FOGS_Document::AddChilds(std::string& _string, NodeData* _node)
+	void FOGS_Document::AddChilds(std::string& _string, Node_impl* _node)
 	{
 		static std::string lv_Tabs = "\t";
 		if (!_node->m_Nodes)
@@ -80,7 +80,7 @@ namespace FOGS
 			WriteChild(lv_Node, _string, lv_Tabs);
 	}
 
-	void FOGS_Document::AddAttributes(std::string& _string, NodeData* _node)
+	void FOGS_Document::AddAttributes(std::string& _string, Node_impl* _node)
 	{
 		if (!_node->m_Attributes)
 			return;
@@ -91,7 +91,7 @@ namespace FOGS
 		_string += ')';
 	}
 
-	void FOGS_Document::AddValue(std::string& _string, ValueData* _value)
+	void FOGS_Document::AddValue(std::string& _string, ValueData_impl* _value)
 	{
 		for(auto lv_Val = _value->m_Values; lv_Val; lv_Val = lv_Val->Sibling)
 		{
@@ -111,9 +111,9 @@ namespace FOGS
 			_Char == ',' || _Char == ';' ;
 	}
 
-	void FOGS_Document::WriteValue(std::string& _string, ValueItem *_Val)
+	void FOGS_Document::WriteValue(std::string& _string, ValueItem_impl *_Val)
 	{
-		FOGS_ValueItem lv_Val = _Val;
+		ValueItem lv_Val = _Val;
 
 		auto lv_Type = lv_Val.Type();
 
@@ -156,7 +156,7 @@ namespace FOGS
 		}
 	}
 
-	void FOGS_Document::WriteChild(NodeData * lv_Node, std::string& _string, std::string &_Tabs)
+	void FOGS_Document::WriteChild(Node_impl * lv_Node, std::string& _string, std::string &_Tabs)
 	{
 		if (!lv_Node->m_Name && !lv_Node->m_Value && !lv_Node->m_Attributes)
 			return;
@@ -190,7 +190,7 @@ namespace FOGS
 
 	}
 
-	void FOGS_Document::WriteAttribute(AttributeData * lv_Attr, std::string& _string)
+	void FOGS_Document::WriteAttribute(Attribute_impl * lv_Attr, std::string& _string)
 	{
 		if (lv_Attr->m_Name)
 		{

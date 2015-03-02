@@ -62,10 +62,10 @@ namespace FOGS
 	};
 
 	template<>
-	class Serializable < FOGS_Node >
+	class Serializable < Node >
 	{
 	protected:
-		typedef std::function<void(const std::string&, FOGS_Node&)> Func;
+		typedef std::function<void(const std::string&, Node&)> Func;
 
 		struct SerializerPair
 		{
@@ -73,7 +73,7 @@ namespace FOGS
 			Func Deserializer;
 		};
 
-		FOGS_Node* ContainerInf = 0;
+		Node* ContainerInf = 0;
 
 		Serializable() = default;
 		Serializable(const Serializable&){};
@@ -90,13 +90,13 @@ namespace FOGS
 		}
 
 	public:
-		virtual void Serialize(FOGS_Node& _cont)
+		virtual void Serialize(Node& _cont)
 		{
 			for (auto& lv_Ser : m_Serializers)
 				lv_Ser.second.Serializer(lv_Ser.first, _cont);
 		}
 
-		virtual void Deserialize(FOGS_Node& _cont)
+		virtual void Deserialize(Node& _cont)
 		{
 			auto lv_Map = _cont.MapChilds();
 			for (auto& lv_Ser : m_Serializers)
@@ -114,25 +114,25 @@ namespace FOGS
 
 
 	template<class T>
-	void Serialize(const std::string& _key, T* _val, FOGS_Node& _node, ...)
+	void Serialize(const std::string& _key, T* _val, Node& _node, ...)
 	{
 		_node.AppendChild().Name(_key).Value() = *_val;
 	}
 
 	template<class T>
-	void Deserialize(const std::string& _key, T* _val, FOGS_Node& _node, ...)
+	void Deserialize(const std::string& _key, T* _val, Node& _node, ...)
 	{
 		*_val = _node.Value().Item();
 	}
 
 	template<class T>
-	void Serialize(const std::string& _key, T* _val, FOGS_Node& _node, Serializable<FOGS_Node>*)
+	void Serialize(const std::string& _key, T* _val, Node& _node, Serializable<Node>*)
 	{
 		_val->Serialize(_node.AppendChild().Name(_key));
 	}
 
 	template<class T>
-	void Deserialize(const std::string& _key, T* _val, FOGS_Node& _node, Serializable<FOGS_Node>*)
+	void Deserialize(const std::string& _key, T* _val, Node& _node, Serializable<Node>*)
 	{
 		_val->Deserialize(_node);
 	}
@@ -140,7 +140,7 @@ namespace FOGS
 
 
 	template<class T>
-	void Serialize(const std::string& _key, std::map<std::string, T>* _val, FOGS_Node& _node, ...)
+	void Serialize(const std::string& _key, std::map<std::string, T>* _val, Node& _node, ...)
 	{
 		auto lv_Node = _node.AppendChild().Name(_key);
 		for (auto lv_Val : *_val)
@@ -148,7 +148,7 @@ namespace FOGS
 	}
 
 	template<class T>
-	void Deserialize(const std::string& _key, std::map<std::string, T>* _val, FOGS_Node& _node, ...)
+	void Deserialize(const std::string& _key, std::map<std::string, T>* _val, Node& _node, ...)
 	{
 		_val->clear();
 
@@ -157,14 +157,14 @@ namespace FOGS
 	}
 
 	template<class T>
-	void Serialize(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, ...)
+	void Serialize(const std::string& _key, std::list<T>* _val, Node& _node, ...)
 	{
 		auto lv_Node = _node.AppendChild().Name(_key);
 		SerializeList(_key, _val, lv_Node, (T*)0);
 	}
 
 	template<class T>
-	void Deserialize(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, ...)
+	void Deserialize(const std::string& _key, std::list<T>* _val, Node& _node, ...)
 	{
 		const char lv_Lable[sizeof(T)] = { 0 };
 		DeserializeList(_key, _val, _node, (T*)0);
@@ -172,7 +172,7 @@ namespace FOGS
 
 
 	template<class T>
-	void SerializeList(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, ...)
+	void SerializeList(const std::string& _key, std::list<T>* _val, Node& _node, ...)
 	{
 		auto lv_Node = _node.AppendChild().Name(_key);
 		for (auto lv_Val : *_val)
@@ -182,7 +182,7 @@ namespace FOGS
 	}
 
 	template<class T>
-	void DeserializeList(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, ...)
+	void DeserializeList(const std::string& _key, std::list<T>* _val, Node& _node, ...)
 	{
 		_val->clear();
 
@@ -191,7 +191,7 @@ namespace FOGS
 	}
 
 	template<class T>
-	void SerializeList(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, Serializable<FOGS_Node>*)
+	void SerializeList(const std::string& _key, std::list<T>* _val, Node& _node, Serializable<Node>*)
 	{
 		int i = 0;
 		for (auto& lv_Val : *_val)
@@ -199,7 +199,7 @@ namespace FOGS
 	}
 
 	template<class T>
-	void DeserializeList(const std::string& _key, std::list<T>* _val, FOGS_Node& _node, Serializable<FOGS_Node>*)
+	void DeserializeList(const std::string& _key, std::list<T>* _val, Node& _node, Serializable<Node>*)
 	{
 		_val->clear();
 
@@ -212,14 +212,14 @@ namespace FOGS
 	}
 
 	template<class T>
-	void Serialize(const std::string& _key, std::vector<T>* _val, FOGS_Node& _node, ...)
+	void Serialize(const std::string& _key, std::vector<T>* _val, Node& _node, ...)
 	{
 		auto lv_Node = _node.AppendChild().Name(_key);
 		SerializeVector(_key, _val, lv_Node, (T)0);
 	}
 
 	template<class T>
-	void Deserialize(const std::string& _key, std::vector<T>* _val, FOGS_Node& _node, ...)
+	void Deserialize(const std::string& _key, std::vector<T>* _val, Node& _node, ...)
 	{
 		const char lv_Lable[sizeof(T)] = { 0 };
 		DeserializeVector(_key, _val, _node, (T*)0);
@@ -227,7 +227,7 @@ namespace FOGS
 
 
 	template<class T>
-	void SerializeVector(const std::string& _key, std::vector<T>* _val, FOGS_Node& _node, ...)
+	void SerializeVector(const std::string& _key, std::vector<T>* _val, Node& _node, ...)
 	{
 		auto lv_Node = _node.AppendChild().Name(_key);
 
@@ -236,7 +236,7 @@ namespace FOGS
 	}
 
 	template<class T>
-	void DeserializeVector(const std::string& _key, std::vector<T>* _val, FOGS_Node& _node, ...)
+	void DeserializeVector(const std::string& _key, std::vector<T>* _val, Node& _node, ...)
 	{
 		_val->clear();
 		_val->resize(_node.Value().ItemsCount());
@@ -248,7 +248,7 @@ namespace FOGS
 
 
 	template<class T>
-	void SerializeVector(const std::string& _key, std::vector<T>* _val, FOGS_Node& _node, Serializable<FOGS_Node>*)
+	void SerializeVector(const std::string& _key, std::vector<T>* _val, Node& _node, Serializable<Node>*)
 	{
 		int i = 0;
 		for (auto lv_Val : *_val)
@@ -256,7 +256,7 @@ namespace FOGS
 	}
 
 	template<class T>
-	void DeserializeVector(const std::string& _key, std::vector<T>* _val, FOGS_Node& _node, Serializable<FOGS_Node>*)
+	void DeserializeVector(const std::string& _key, std::vector<T>* _val, Node& _node, Serializable<Node>*)
 	{
 		_val->clear();
 		_val->resize(_node.ChildsCount());

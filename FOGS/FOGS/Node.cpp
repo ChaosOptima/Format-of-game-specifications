@@ -5,20 +5,20 @@
 
 namespace FOGS
 {
-	Allocator<sizeof(NodeData)> NodeAlloc;
-	Allocator<sizeof(AttributeData)> AttrAlloc;
+	Allocator<sizeof(Node_impl)> NodeAlloc;
+	Allocator<sizeof(Attribute_impl)> AttrAlloc;
 
-	NodeData::NodeData(FOGS_Context* _context)
+	Node_impl::Node_impl(FOGS_Context* _context)
 	{
 		m_Context = _context;
 	}
 
-	void NodeData::ReadNodes()
+	void Node_impl::ReadNodes()
 	{
-		*m_Context += new READER_ALLOC Reader<NodeData>(this, &NodeData::NodesReader);
+		*m_Context += new READER_ALLOC Reader<Node_impl>(this, &Node_impl::NodesReader);
 	}
 
-	bool NodeData::NodesReader(char* _char)
+	bool Node_impl::NodesReader(char* _char)
 	{
 		if (m_Context->CanSkip(_char))
 			return true;
@@ -28,18 +28,18 @@ namespace FOGS
 			return true;
 		}
 
-		NodeData* lv_NewNode = new NODE_ALLOC NodeData(m_Context);
+		Node_impl* lv_NewNode = new NODE_ALLOC Node_impl(m_Context);
 		lv_NewNode->m_Parent = this;
 		lv_NewNode->ReadName();
 		return m_Context->Read(_char);
 	}
 
-	void NodeData::ReadAttributes()
+	void Node_impl::ReadAttributes()
 	{
-		*m_Context += new READER_ALLOC Reader<NodeData>(this, &NodeData::AttributesReader);
+		*m_Context += new READER_ALLOC Reader<Node_impl>(this, &Node_impl::AttributesReader);
 	}
 
-	bool NodeData::AttributesReader(char* _char)
+	bool Node_impl::AttributesReader(char* _char)
 	{
 		if (m_Context->CanSkip(_char))
 			return true;
@@ -49,20 +49,20 @@ namespace FOGS
 			return true;
 		}
 
-		AttributeData* lv_NewData = new ATTR_ALLOC AttributeData(m_Context);
+		Attribute_impl* lv_NewData = new ATTR_ALLOC Attribute_impl(m_Context);
 		lv_NewData->m_Parent = this;
 		lv_NewData->ReadName();
 		return m_Context->Read(_char);
 
 	}
 
-	void NodeData::ReadName()
+	void Node_impl::ReadName()
 	{
 		m_End = 0;
-		*m_Context += new READER_ALLOC Reader<NodeData>(this, &NodeData::NameReader);
+		*m_Context += new READER_ALLOC Reader<Node_impl>(this, &Node_impl::NameReader);
 	}
 
-	bool NodeData::NameReader(char* _char)
+	bool Node_impl::NameReader(char* _char)
 	{
 		if (IsUnexpected(_char))
 			return false;
@@ -81,7 +81,7 @@ namespace FOGS
 
 			if (!m_Value && !m_Attributes)
 			{
-				m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
+				m_Value = new VALUE_DATA_ALLOC ValueData_impl(m_Context);
 				auto Item = m_Value->AddItem();
 				if (m_Name)
 					*(m_End + 1) = 0;
@@ -103,7 +103,7 @@ namespace FOGS
 			if (m_Value || m_Attributes)
 				return false;
 
-			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData_impl(m_Context);
 			auto Item = m_Value->AddItem();
 			if (m_Name)
 				*(m_End + 1) = 0;
@@ -134,7 +134,7 @@ namespace FOGS
 
 			if (!m_Value && !m_Attributes)
 			{
-				m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
+				m_Value = new VALUE_DATA_ALLOC ValueData_impl(m_Context);
 				auto Item = m_Value->AddItem();
 				if (m_Name)
 					*(m_End + 1) = 0;
@@ -164,7 +164,7 @@ namespace FOGS
 
 
 			NameEnds();
-			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData_impl(m_Context);
 			m_Value->m_Node = this;
 			m_Value->ReadValue();
 			return true;
@@ -175,7 +175,7 @@ namespace FOGS
 				return false;
 
 			m_Context->PopReader();
-			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData_impl(m_Context);
 			m_Value->m_Node = this;
 			m_Value->ReadValue();
 			auto lv_Ret = m_Context->Read(_char);
@@ -197,7 +197,7 @@ namespace FOGS
 			lv_Tmp = m_Name; 
 			m_Name = 0;
 			NameEnds();
-			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData_impl(m_Context);
 			m_Value->m_Node = this;
 			m_Value->ReadValue(lv_Tmp);
 			return true;
@@ -215,14 +215,14 @@ namespace FOGS
 		
 	}
 
-	bool NodeData::IsUnexpected(char* _char)
+	bool Node_impl::IsUnexpected(char* _char)
 	{
 		return
 			*_char == ')' ||
 			*_char == ']' ;
 	}
 
-	void NodeData::NameEnds()
+	void Node_impl::NameEnds()
 	{
 		m_Context->PopReader();		
 		if (!m_NameEnds)
@@ -236,7 +236,7 @@ namespace FOGS
 		}
 	}
 
-	NodeData::~NodeData()
+	Node_impl::~Node_impl()
 	{
 		auto lv_Node = m_Nodes;
 		while (lv_Node)
@@ -260,7 +260,7 @@ namespace FOGS
 			delete[] m_Name;
 	}
 
-	void NodeData::AppendNode()
+	void Node_impl::AppendNode()
 	{
 		if (!m_Parent->m_Nodes)
 			m_Parent->m_Nodes = this;
@@ -274,22 +274,22 @@ namespace FOGS
 
 //////////////////////////////////////////////////////////////////////////
 
-	FOGS_Node::FOGS_Node(NodeData* _data)
+	Node::Node(Node_impl* _data)
 	{
 		m_Data = _data;
 	}
 
-	unsigned int FOGS_Node::ChildsCount()
+	unsigned int Node::ChildsCount()
 	{
 		return m_Data->m_NodesSize;
 	}
 
-	unsigned int FOGS_Node::AttributesCount()
+	unsigned int Node::AttributesCount()
 	{
 		return m_Data->m_AttrSize;
 	}
 
-	FOGS_Node FOGS_Node::Childe(const std::string& _key)
+	Node Node::Childe(const std::string& _key)
 	{
 	
 		for (auto lv_Node = m_Data->m_Nodes; lv_Node; lv_Node = lv_Node->m_Sibling)
@@ -301,17 +301,17 @@ namespace FOGS
 		return 0;
 	}
 
-	FOGS_Node FOGS_Node::operator[](const std::string& _key)
+	Node Node::operator[](const std::string& _key)
 	{
 		return Childe(_key);
 	}
 
-	FOGS::FOGS_Node FOGS_Node::operator[](const char* _key)
+	FOGS::Node Node::operator[](const char* _key)
 	{
 		return Childe(std::string(_key));
 	}
 
-	FOGS_Attribute FOGS_Node::Attribute(const std::string& _key)
+	Attribute Node::AttributeAt(const std::string& _key)
 	{
 		for (auto lv_Attr = m_Data->m_Attributes; lv_Attr; lv_Attr = lv_Attr->m_Sibling)
 		{
@@ -322,33 +322,33 @@ namespace FOGS
 		return 0;
 	}
 
-	FOGS_Attribute FOGS_Node::operator()(const std::string& _key)
+	Attribute Node::operator()(const std::string& _key)
 	{
-		return Attribute(_key);
+		return AttributeAt(_key);
 	}
 	
-	FOGS_Node::operator bool()
+	Node::operator bool()
 	{
 		return m_Data != 0;
 	}
 
-	bool FOGS_Node::IsNull()
+	bool Node::IsNull()
 	{
 		return m_Data == 0;
 	}
 
-	FOGS_Value FOGS_Node::Value()
+	ValueData Node::Value()
 	{
 		if (!m_Data->m_Value)
 		{
-			m_Data->m_Value = new VALUE_DATA_ALLOC ValueData(0);
+			m_Data->m_Value = new VALUE_DATA_ALLOC ValueData_impl(0);
 			m_Data->m_Value->m_Node = m_Data;
 		}
 
 		return m_Data->m_Value;
 	}
 	
-	FOGS_Node FOGS_Node::Next()
+	Node Node::Next()
 	{
 		for (auto lv_Node = m_Data->m_Sibling; lv_Node; lv_Node = lv_Node->m_Sibling)
 		{
@@ -359,12 +359,12 @@ namespace FOGS
 		return 0;
 	}
 
-	std::string FOGS_Node::Name()
+	std::string Node::Name()
 	{
 		return m_Data->m_Name;
 	}
 
-	FOGS_Node& FOGS_Node::Name(const std::string& _val)
+	Node& Node::Name(const std::string& _val)
 	{
 		auto lv_Size = _val.size();
 		if (!m_Data->ContextHolder)
@@ -383,7 +383,7 @@ namespace FOGS
 		return *this;
 	}
 
-	FOGS_Node& FOGS_Node::Name(const char* _val)
+	Node& Node::Name(const char* _val)
 	{
 		auto lv_Size = strlen(_val);
 		if (!m_Data->ContextHolder)
@@ -402,31 +402,31 @@ namespace FOGS
 		return *this;
 	}
 
-	FOGS_Node FOGS_Node::AppendChild()
+	Node Node::AppendChild()
 	{
-		NodeData* lv_Node = new NODE_ALLOC NodeData(0);
+		Node_impl* lv_Node = new NODE_ALLOC Node_impl(0);
 		lv_Node->m_Parent = m_Data;
 		lv_Node->AppendNode();
 		return lv_Node;
 	}
 
-	FOGS_Node FOGS_Node::AppendChild(const char* _name)
+	Node Node::AppendChild(const char* _name)
 	{
-		FOGS_Node lv_Node = AppendChild();
+		Node lv_Node = AppendChild();
 		lv_Node.Name(_name);
 		return lv_Node;
 	}
 
-	FOGS_Node FOGS_Node::AppendChild(const std::string& _name)
+	Node Node::AppendChild(const std::string& _name)
 	{
-		FOGS_Node lv_Node = AppendChild();
+		Node lv_Node = AppendChild();
 		lv_Node.Name(_name);
 		return lv_Node;
 	}
 
-	FOGS_Attribute FOGS_Node::AppendAttribute()
+	Attribute Node::AppendAttribute()
 	{
-		auto lv_Attr = new ATTR_ALLOC  AttributeData(0);
+		auto lv_Attr = new ATTR_ALLOC  Attribute_impl(0);
 		lv_Attr->m_Parent = m_Data;
 		lv_Attr->m_Sibling = m_Data->m_Attributes;
 		m_Data->m_Attributes = lv_Attr;
@@ -434,19 +434,19 @@ namespace FOGS
 		return lv_Attr;
 	}
 
-	FOGS_Attribute FOGS_Node::AppendAttribute(const char* _name)
+	Attribute Node::AppendAttribute(const char* _name)
 	{
 		return AppendAttribute().Name(_name);
 	}
 
-	FOGS_Attribute FOGS_Node::AppendAttribute(const std::string& _name)
+	Attribute Node::AppendAttribute(const std::string& _name)
 	{
 		return AppendAttribute().Name(_name);
 	}
 
-	std::list<FOGS_Node> FOGS_Node::Childs()
+	std::list<Node> Node::Childs()
 	{
-		std::list<FOGS_Node> lv_Val;
+		std::list<Node> lv_Val;
 
 		for (auto lv_Node = m_Data->m_Nodes; lv_Node; lv_Node = lv_Node->m_Sibling)
 			lv_Val.push_back(lv_Node);
@@ -454,14 +454,14 @@ namespace FOGS
 		return lv_Val;
 	}
 
-	std::list<FOGS_Node> FOGS_Node::Childs(const char* _name)
+	std::list<Node> Node::Childs(const char* _name)
 	{
 		return Childs(std::string(_name));
 	}
 
-	std::list<FOGS_Node> FOGS_Node::Childs(const std::string& _name)
+	std::list<Node> Node::Childs(const std::string& _name)
 	{
-		std::list<FOGS_Node> lv_Val;
+		std::list<Node> lv_Val;
 
 		for (auto lv_Node = m_Data->m_Nodes; lv_Node; lv_Node = lv_Node->m_Sibling)
 			if (lv_Node->m_Name == _name)
@@ -470,23 +470,23 @@ namespace FOGS
 		return lv_Val;
 	}
 
-	std::list<FOGS_Attribute> FOGS_Node::Attributes()
+	std::list<Attribute> Node::Attributes()
 	{
-		std::list<FOGS_Attribute> lv_Val;
+		std::list<Attribute> lv_Val;
 		for (auto lv_Attr = m_Data->m_Attributes; lv_Attr; lv_Attr = lv_Attr->m_Sibling)
 			lv_Val.push_back(lv_Attr);
 
 		return lv_Val;
 	}
 
-	std::list<FOGS_Attribute> FOGS_Node::Attributes(const char* _name)
+	std::list<Attribute> Node::Attributes(const char* _name)
 	{
 		return Attributes(std::string(_name));
 	}
 
-	std::list<FOGS_Attribute> FOGS_Node::Attributes(const std::string& _name)
+	std::list<Attribute> Node::Attributes(const std::string& _name)
 	{
-		std::list<FOGS_Attribute> lv_Val;
+		std::list<Attribute> lv_Val;
 		for (auto lv_Attr = m_Data->m_Attributes; lv_Attr; lv_Attr = lv_Attr->m_Sibling)
 			if (lv_Attr->m_Name == _name)
 				lv_Val.push_back(lv_Attr);
@@ -494,62 +494,62 @@ namespace FOGS
 		return lv_Val;
 	}
 
-	std::map<std::string, std::list<FOGS_Node>> FOGS_Node::MapChilds()
+	std::map<std::string, std::list<Node>> Node::MapChilds()
 	{
-		std::map<std::string, std::list<FOGS_Node>> lv_Map;
+		std::map<std::string, std::list<Node>> lv_Map;
 		for (auto lv_Node = m_Data->m_Nodes; lv_Node; lv_Node = lv_Node->m_Sibling)
 			lv_Map[lv_Node->m_Name].push_back(lv_Node);
 		
 		return lv_Map;
 	}
 
-	std::map<std::string, std::list<FOGS_Attribute>> FOGS_Node::MapAttributes()
+	std::map<std::string, std::list<Attribute>> Node::MapAttributes()
 	{
-		std::map<std::string, std::list<FOGS_Attribute>> lv_Map;
+		std::map<std::string, std::list<Attribute>> lv_Map;
 		for (auto lv_Attr = m_Data->m_Attributes; lv_Attr; lv_Attr = lv_Attr->m_Sibling)
 			lv_Map[lv_Attr->m_Name].push_back(lv_Attr);
 
 		return lv_Map;
 	}
 
-	FOGS_Node::Iterator FOGS_Node::begin()
+	Node::Iterator Node::begin()
 	{
 		return m_Data->m_Nodes;
 	}
 
-	FOGS_Node::Iterator FOGS_Node::end()
+	Node::Iterator Node::end()
 	{
 		return 0;
 	}
 
 
-	FOGS_Node::Iterator::Iterator(NodeData* _root)
+	Node::Iterator::Iterator(Node_impl* _root)
 	{
 		m_Root = _root;
 	}
 
-	FOGS::FOGS_Node FOGS_Node::Iterator::operator*() const
+	FOGS::Node Node::Iterator::operator*() const
 	{
 		return m_Root;
 	}
 
-	FOGS_Node::Iterator& FOGS_Node::Iterator::operator++()
+	Node::Iterator& Node::Iterator::operator++()
 	{
 		m_Root = m_Root->m_Sibling;
 		return *this;
 	}
 
-	bool FOGS_Node::Iterator::operator!=(const Iterator& _rval)
+	bool Node::Iterator::operator!=(const Iterator& _rval)
 	{
 		return m_Root != _rval.m_Root;
 	}
 
-	FOGS_Node::Iterator begin(FOGS_Node& _val)
+	Node::Iterator begin(Node& _val)
 	{
 		return _val.begin();
 	}
 
-	FOGS_Node::Iterator end(FOGS_Node& _val)
+	Node::Iterator end(Node& _val)
 	{
 		return _val.end();
 	}

@@ -8,10 +8,10 @@ namespace FOGS
 {
 	class FOGS_Context;
 	
-	struct NodeData
+	struct Node_impl
 	{
-		NodeData(FOGS_Context* _context);
-		~NodeData();
+		Node_impl(FOGS_Context* _context);
+		~Node_impl();
 
 		void ReadNodes();
 		void ReadName();
@@ -25,36 +25,36 @@ namespace FOGS
 		void AppendNode();
 
 		char* m_Name = 0;
-		NodeData* m_Sibling = 0;
-		NodeData* m_Nodes = 0;
-		NodeData* m_Last = 0;
+		Node_impl* m_Sibling = 0;
+		Node_impl* m_Nodes = 0;
+		Node_impl* m_Last = 0;
 		unsigned int m_NodesSize = 0;
 
-		AttributeData* m_Attributes = 0;
-		AttributeData* m_AttLast = 0;
+		Attribute_impl* m_Attributes = 0;
+		Attribute_impl* m_AttLast = 0;
 		unsigned int m_AttrSize = 0;
 
 		bool m_NameEnds = false;
 		bool ContextHolder = true;
-		ValueData* m_Value = 0;
+		ValueData_impl* m_Value = 0;
 		FOGS_Context* m_Context = 0;
-		NodeData* m_Parent = 0;
+		Node_impl* m_Parent = 0;
 
 		char* m_End = 0;
 	};
 
-	extern Allocator<sizeof(NodeData)> NodeAlloc;
-	extern Allocator<sizeof(AttributeData)> AttrAlloc;
+	extern Allocator<sizeof(Node_impl)> NodeAlloc;
+	extern Allocator<sizeof(Attribute_impl)> AttrAlloc;
 
-	class FOGS_Node
+	class Node
 	{
 	public:
 		class Iterator
 		{
-			NodeData* m_Root;
+			Node_impl* m_Root;
 		public:
-			Iterator(NodeData* _root);
-			FOGS_Node operator*() const;
+			Iterator(Node_impl* _root);
+			Node operator*() const;
 			Iterator& operator++();
 			bool operator!=(const Iterator& _rval);
 		};
@@ -62,45 +62,45 @@ namespace FOGS
 		Iterator begin();
 		Iterator end();
 
-		FOGS_Node(NodeData* _data);
+		Node(Node_impl* _data);
 		
 		std::string Name();
-		FOGS_Node& Name(const std::string& _val);
-		FOGS_Node& Name(const char* _val);
+		Node& Name(const std::string& _val);
+		Node& Name(const char* _val);
 
 		bool IsNull();
-		FOGS_Node Next();
-		FOGS_Value Value();
+		Node Next();
+		ValueData Value();
 
 		unsigned int ChildsCount();
-		FOGS_Node Childe(const std::string& _key);
-		FOGS_Node AppendChild();
-		FOGS_Node AppendChild(const char* _name);
-		FOGS_Node AppendChild(const std::string& _name);
-		std::list<FOGS_Node> Childs();
-		std::list<FOGS_Node> Childs(const char* _name);
-		std::list<FOGS_Node> Childs(const std::string& _name);
-		std::map<std::string, std::list<FOGS_Node>> MapChilds();
+		Node Childe(const std::string& _key);
+		Node AppendChild();
+		Node AppendChild(const char* _name);
+		Node AppendChild(const std::string& _name);
+		std::list<Node> Childs();
+		std::list<Node> Childs(const char* _name);
+		std::list<Node> Childs(const std::string& _name);
+		std::map<std::string, std::list<Node>> MapChilds();
 
 		unsigned int AttributesCount();
-		FOGS_Attribute Attribute(const std::string& _key);
-		FOGS_Attribute AppendAttribute();
-		FOGS_Attribute AppendAttribute(const char* _name);
-		FOGS_Attribute AppendAttribute(const std::string& _name);
-		std::list<FOGS_Attribute> Attributes();
-		std::list<FOGS_Attribute> Attributes(const char* _name);
-		std::list<FOGS_Attribute> Attributes(const std::string& _name);
-		std::map<std::string, std::list<FOGS_Attribute>> MapAttributes();
+		Attribute AttributeAt(const std::string& _key);
+		Attribute AppendAttribute();
+		Attribute AppendAttribute(const char* _name);
+		Attribute AppendAttribute(const std::string& _name);
+		std::list<Attribute> Attributes();
+		std::list<Attribute> Attributes(const char* _name);
+		std::list<Attribute> Attributes(const std::string& _name);
+		std::map<std::string, std::list<Attribute>> MapAttributes();
 
 		operator bool();
-		FOGS_Node operator[](const std::string& _key);
-		FOGS_Node operator[](const char* _key);
-		FOGS_Attribute operator()(const std::string& _key);	
+		Node operator[](const std::string& _key);
+		Node operator[](const char* _key);
+		Attribute operator()(const std::string& _key);	
 
 	private:
-		NodeData* m_Data = 0;
+		Node_impl* m_Data = 0;
 	};
 
-	FOGS_Node::Iterator begin(FOGS_Node& _val);
-	FOGS_Node::Iterator end(FOGS_Node& _val);
+	Node::Iterator begin(Node& _val);
+	Node::Iterator end(Node& _val);
 }

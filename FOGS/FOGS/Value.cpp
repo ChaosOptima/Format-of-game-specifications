@@ -9,21 +9,21 @@
 
 namespace FOGS
 {
-	Allocator<sizeof(ValueItem)> ValueItemAlloc;
-	Allocator<sizeof(ValueData)> ValueDataAlloc;
+	Allocator<sizeof(ValueItem_impl)> ValueItemAlloc;
+	Allocator<sizeof(ValueData_impl)> ValueDataAlloc;
 
-	ValueData::ValueData(FOGS_Context* _context)
+	ValueData_impl::ValueData_impl(FOGS_Context* _context)
 	{
 		m_Context = _context;
 	}
 
-	void ValueData::ReadValue()
+	void ValueData_impl::ReadValue()
 	{
 		m_End = 0;
-		*m_Context += new READER_ALLOC  Reader<ValueData>(this, &ValueData::ValueReader);
+		*m_Context += new READER_ALLOC  Reader<ValueData_impl>(this, &ValueData_impl::ValueReader);
 	}
 
-	bool ValueData::ValueReader(char* _char)
+	bool ValueData_impl::ValueReader(char* _char)
 	{
 		if (m_Context->CanSkip(_char))
 		{
@@ -104,7 +104,7 @@ namespace FOGS
 	}
 	
 
-	void ValueData::ReadValue(char* _lable)
+	void ValueData_impl::ReadValue(char* _lable)
 	{
 		ReadValue();
 		m_CurrentValue = AddItem();
@@ -112,14 +112,14 @@ namespace FOGS
 		ReadMeta();
 	}
 
-	bool ValueData::IsUnexpacted(char* _char)
+	bool ValueData_impl::IsUnexpacted(char* _char)
 	{
 		return
 			*_char == '(' || *_char == ']' ||
 			*_char == '=';
 	}
 
-	bool ValueData::ReadString()
+	bool ValueData_impl::ReadString()
 	{
 		m_Context->ReadAsString(true);
 		if (!m_CurrentValue)
@@ -129,12 +129,12 @@ namespace FOGS
 
 		m_CurrentValue->Type = VT_STRING;
 
-		*m_Context += new READER_ALLOC  Reader<ValueData>(this, &ValueData::StringReader);
+		*m_Context += new READER_ALLOC  Reader<ValueData_impl>(this, &ValueData_impl::StringReader);
 		
 		return true;
 	}
 
-	bool ValueData::StringReader(char* _char)
+	bool ValueData_impl::StringReader(char* _char)
 	{
 		if (m_IgnorNext)
 		{
@@ -162,7 +162,7 @@ namespace FOGS
 		return true;
 	}
 
-	bool ValueData::ReadMeta()
+	bool ValueData_impl::ReadMeta()
 	{
 		if (m_ValueReady)
 			return false;
@@ -184,12 +184,12 @@ namespace FOGS
 		m_CurrentValue->Type = VT_META;
 
 		m_Context->ReadAsMeta(true);
-		*m_Context += new READER_ALLOC  Reader<ValueData>(this, &ValueData::MetaReader);
+		*m_Context += new READER_ALLOC  Reader<ValueData_impl>(this, &ValueData_impl::MetaReader);
 
 		return true;
 	}
 
-	bool ValueData::MetaReader(char* _char)
+	bool ValueData_impl::MetaReader(char* _char)
 	{
 		if (m_IgnorNext)
 		{
@@ -217,7 +217,7 @@ namespace FOGS
 		return true;
 	}
 
-	ValueData::~ValueData()
+	ValueData_impl::~ValueData_impl()
 	{
 		auto lv_Val = m_Values;
 		while (lv_Val)
@@ -228,9 +228,9 @@ namespace FOGS
 		}
 	}
 
-	ValueItem* ValueData::AddItem()
+	ValueItem_impl* ValueData_impl::AddItem()
 	{
-		auto lv_NewItem = new VALUE_ITEM_ALLOC  ValueItem();
+		auto lv_NewItem = new VALUE_ITEM_ALLOC  ValueItem_impl();
 
 		if (!m_Values)
 		{
@@ -247,7 +247,7 @@ namespace FOGS
 		return lv_NewItem;
 	}
 
-	void ValueItem::FreeStrings()
+	void ValueItem_impl::FreeStrings()
 	{
 		if (Lable)
 		{
@@ -270,7 +270,7 @@ namespace FOGS
 		ContexHolder = false;
 	}
 
-	ValueItem::~ValueItem()
+	ValueItem_impl::~ValueItem_impl()
 	{
 		if (!ContexHolder)
 		{
@@ -282,22 +282,22 @@ namespace FOGS
 
 
 
-	FOGS_Value::FOGS_Value(ValueData* _data)
+	ValueData::ValueData(ValueData_impl* _data)
 	{
 		m_Data = _data;
 	}
 
-	FOGS_Value::operator bool()
+	ValueData::operator bool()
 	{
 		return m_Data->m_Values != 0;
 	}
 
-	bool FOGS_Value::IsArray()
+	bool ValueData::IsArray()
 	{
 		return m_Data->m_Values && m_Data->m_Values->Sibling;
 	}
 
-	FOGS_ValueItem FOGS_Value::Item()
+	ValueItem ValueData::Item()
 	{
 		if (!m_Data->m_Values)
 			m_Data->AddItem();
@@ -305,7 +305,7 @@ namespace FOGS
 		return m_Data->m_Values;
 	}
 
-	FOGS::FOGS_ValueItem FOGS_Value::Item(int _ind)
+	FOGS::ValueItem ValueData::Item(int _ind)
 	{
 		auto lv_Val = m_Data->m_Values;
 		for (int i = 0; lv_Val && i < _ind; i++)
@@ -314,19 +314,19 @@ namespace FOGS
 		return lv_Val;
 	}
 
-	unsigned int FOGS_Value::ItemsCount()
+	unsigned int ValueData::ItemsCount()
 	{
 		return m_Data->m_ValueSize;
 	}
 
-	FOGS::FOGS_ValueItem FOGS_Value::operator[](int _ind)
+	FOGS::ValueItem ValueData::operator[](int _ind)
 	{
 		return Item(_ind);
 	}
 
-	std::vector<FOGS_ValueItem> FOGS_Value::Items()
+	std::vector<ValueItem> ValueData::Items()
 	{
-		std::vector<FOGS_ValueItem> lv_Items;
+		std::vector<ValueItem> lv_Items;
 		lv_Items.reserve(m_Data->m_ValueSize);
 		for (auto lv_Val = m_Data->m_Values; lv_Val; lv_Val = lv_Val->Sibling)
 			lv_Items.push_back(lv_Val);
@@ -334,39 +334,39 @@ namespace FOGS
 		return lv_Items;
 	}
 
-	FOGS_Value::operator FOGS_ValueItem()
+	ValueData::operator ValueItem()
 	{
 		return m_Data->m_Values;
 	}
 
-	FOGS_ValueItem FOGS_Value::AppendItem()
+	ValueItem ValueData::AppendItem()
 	{
 		auto lv_NewItem = m_Data->AddItem();
 		return lv_NewItem;
 	}
 
-	FOGS_ValueItem FOGS_Value::operator*()
+	ValueItem ValueData::operator*()
 	{
 		return Item();
 	}
 
-	bool FOGS_Value::IsEmpty()
+	bool ValueData::IsEmpty()
 	{
 		return !m_Data->m_Values;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	FOGS_ValueItem::FOGS_ValueItem(ValueItem* _data)
+	ValueItem::ValueItem(ValueItem_impl* _data)
 	{
 		m_Data = _data;
 	}
 
-	std::string FOGS_ValueItem::Lable()
+	std::string ValueItem::Lable()
 	{
 		return m_Data->Lable ?m_Data->Lable :"";
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::Lable(const std::string& _val)
+	ValueItem& ValueItem::Lable(const std::string& _val)
 	{
 		m_Data->Type = VT_META;
 
@@ -381,7 +381,7 @@ namespace FOGS
 		return *this;
 	}
 
-	ValueType FOGS_ValueItem::Type()
+	ValueType ValueItem::Type()
 	{
 		if (!m_Data)
 			return VT_NON;
@@ -470,7 +470,7 @@ namespace FOGS
 		return m_Data->Type;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::SetConstant(const std::string& _val)
+	ValueItem& ValueItem::SetConstant(const std::string& _val)
 	{
 		m_Data->Type = VT_CONSTANT;
 
@@ -486,28 +486,28 @@ namespace FOGS
 		return *this;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::operator=(long long _val)
+	ValueItem& ValueItem::operator=(long long _val)
 	{
 		m_Data->Type = VT_INT;
 		m_Data->AsInt = _val;
 		return *this;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::operator=(long double _val)
+	ValueItem& ValueItem::operator=(long double _val)
 	{
 		m_Data->Type = VT_FLOAT;
 		m_Data->AsDouble = _val;
 		return *this;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::operator=(bool _val)
+	ValueItem& ValueItem::operator=(bool _val)
 	{
 		m_Data->Type = VT_BOOL;
 		m_Data->AsBool = _val;
 		return *this;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::operator=(const std::string& _val)
+	ValueItem& ValueItem::operator=(const std::string& _val)
 	{
 		m_Data->Type = VT_STRING;
 
@@ -525,21 +525,21 @@ namespace FOGS
 		return *this;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::operator=(int _val)
+	ValueItem& ValueItem::operator=(int _val)
 	{
 		m_Data->Type = VT_INT;
 		m_Data->AsInt = _val;
 		return *this;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::operator=(float _val)
+	ValueItem& ValueItem::operator=(float _val)
 	{
 		m_Data->Type = VT_FLOAT;
 		m_Data->AsDouble = _val;
 		return *this;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::operator=(const char* _val)
+	ValueItem& ValueItem::operator=(const char* _val)
 	{
 		m_Data->Type = VT_STRING;
 		auto lv_Size = strlen(_val);
@@ -554,14 +554,14 @@ namespace FOGS
 		return *this;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::operator=(double _val)
+	ValueItem& ValueItem::operator=(double _val)
 	{
 		m_Data->Type = VT_FLOAT;
 		m_Data->AsDouble = _val;
 		return *this;
 	}
 
-	long long FOGS_ValueItem::AsInt()
+	long long ValueItem::AsInt()
 	{
 		auto lv_Type = Type();
 		if (lv_Type == VT_INT)
@@ -582,7 +582,7 @@ namespace FOGS
 		}
 	}
 
-	long double FOGS_ValueItem::AsDouble()
+	long double ValueItem::AsDouble()
 	{
 		auto lv_Type = Type();
 		if (lv_Type == VT_FLOAT)
@@ -604,7 +604,7 @@ namespace FOGS
 		
 	}
 
-	bool FOGS_ValueItem::AsBool()
+	bool ValueItem::AsBool()
 	{
 		auto lv_Type = Type();
 		if (lv_Type == VT_BOOL)
@@ -622,7 +622,7 @@ namespace FOGS
 		}
 	}
 
-	std::string FOGS_ValueItem::AsString()
+	std::string ValueItem::AsString()
 	{
 		auto lv_Type = Type();
 
@@ -691,77 +691,77 @@ namespace FOGS
 		}
 	}
 
-	FOGS_ValueItem::operator int()
+	ValueItem::operator int()
 	{
 		return (int)AsInt();
 	}
 
-	FOGS_ValueItem::operator unsigned int()
+	ValueItem::operator unsigned int()
 	{
 		return (unsigned int)AsInt();
 	}
 
-	FOGS_ValueItem::operator long()
+	ValueItem::operator long()
 	{
 		return (long)AsInt();
 	}
 
-	FOGS_ValueItem::operator unsigned long()
+	ValueItem::operator unsigned long()
 	{
 		return (unsigned long)AsInt();
 	}
 
-	FOGS_ValueItem::operator unsigned long long()
+	ValueItem::operator unsigned long long()
 	{
 		return (unsigned long long)AsInt();
 	}
 
-	FOGS_ValueItem::operator long long()
+	ValueItem::operator long long()
 	{
 		return AsInt();
 	}
 
-	FOGS_ValueItem::operator float()
+	ValueItem::operator float()
 	{
 		return (float)AsDouble();
 	}
 
-	FOGS_ValueItem::operator double()
+	ValueItem::operator double()
 	{
 		return AsDouble();
 	}
 
-	FOGS_ValueItem::operator long double()
+	ValueItem::operator long double()
 	{
 		return AsDouble();
 	}
 
-	FOGS_ValueItem::operator bool()
+	ValueItem::operator bool()
 	{
 		return AsBool();
 	}
 
-	FOGS_ValueItem::operator std::string()
+	ValueItem::operator std::string()
 	{
 		return AsString();
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::SetString(const std::string& _val)
+	ValueItem& ValueItem::SetString(const std::string& _val)
 	{
 		return *this = _val;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::SetInt(long long _val)
+	ValueItem& ValueItem::SetInt(long long _val)
 	{
 		return *this = _val;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::SetFloat(long double _val)
+	ValueItem& ValueItem::SetFloat(long double _val)
 	{
 		return *this = _val;
 	}
 
-	FOGS_ValueItem& FOGS_ValueItem::SetBool(long long _val)
+	ValueItem& ValueItem::SetBool(long long _val)
 	{
 		return *this = _val;
 	}

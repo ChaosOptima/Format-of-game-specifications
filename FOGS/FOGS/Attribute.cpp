@@ -6,17 +6,17 @@
 
 namespace FOGS
 {
-	AttributeData::AttributeData(FOGS_Context* _context)
+	Attribute_impl::Attribute_impl(FOGS_Context* _context)
 	{
 		m_Context = _context;
 	}
 
-	void AttributeData::ReadName()
+	void Attribute_impl::ReadName()
 	{
-		*m_Context += new READER_ALLOC Reader<AttributeData>(this, &AttributeData::NameReader);
+		*m_Context += new READER_ALLOC Reader<Attribute_impl>(this, &Attribute_impl::NameReader);
 	}
 
-	bool AttributeData::NameReader(char* _char)
+	bool Attribute_impl::NameReader(char* _char)
 	{
 		if (m_Context->CanSkip(_char))
 		{
@@ -88,7 +88,7 @@ namespace FOGS
 
 			m_Context->PopReader();
 			AppendAttribute();
-			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData_impl(m_Context);
 			m_Value->m_Attribute = this;
 			m_Value->ReadValue(m_Name);
 			m_Name = 0;
@@ -101,7 +101,7 @@ namespace FOGS
 
 			m_Context->PopReader();
 			AppendAttribute();
-			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData_impl(m_Context);
 			m_Value->m_Attribute = this;
 			m_Value->ReadValue();
 			if (m_Name)
@@ -115,7 +115,7 @@ namespace FOGS
 
 			m_Context->PopReader();
 			AppendAttribute();
-			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData_impl(m_Context);
 			m_Value->m_Attribute = this;
 			m_Value->ReadValue();
 			auto lv_Ret = m_Context->Read(_char);
@@ -136,17 +136,17 @@ namespace FOGS
 		return true;
 	}
 
-	bool AttributeData::IsUnexpacted(char* _char)
+	bool Attribute_impl::IsUnexpacted(char* _char)
 	{
 		return
 			*_char == '{' || *_char == '}' ||
 			*_char == ']' ||	*_char == '(';
 	}
 
-	void AttributeData::NameToValue()
+	void Attribute_impl::NameToValue()
 	{
 		if (!m_Value)
-			m_Value = new VALUE_DATA_ALLOC ValueData(m_Context);
+			m_Value = new VALUE_DATA_ALLOC ValueData_impl(m_Context);
 		auto Item = m_Value->AddItem(); 
 
 		if (m_Name)
@@ -155,7 +155,7 @@ namespace FOGS
 		m_Name = 0;
 	}
 
-	AttributeData::~AttributeData()
+	Attribute_impl::~Attribute_impl()
 	{
 		ValueDataAlloc.Free(m_Value);
 
@@ -163,7 +163,7 @@ namespace FOGS
 			delete[] m_Name;
 	}
 
-	void AttributeData::AppendAttribute()
+	void Attribute_impl::AppendAttribute()
 	{
 		if (!m_Parent->m_Attributes)
 			m_Parent->m_Attributes = this;
@@ -175,17 +175,17 @@ namespace FOGS
 	}
 
 
-	FOGS_Attribute::FOGS_Attribute(AttributeData* _data)
+	Attribute::Attribute(Attribute_impl* _data)
 	{
 		m_Data = _data;
 	}
 
-	std::string FOGS_Attribute::Name()
+	std::string Attribute::Name()
 	{
 		return m_Data->m_Name;
 	}
 
-	FOGS_Attribute& FOGS_Attribute::Name(const std::string& _val)
+	Attribute& Attribute::Name(const std::string& _val)
 	{
 		auto lv_Size = _val.size();
 		if (!m_Data->ContextHolder)
@@ -205,7 +205,7 @@ namespace FOGS
 		return *this;
 	}
 
-	FOGS_Attribute& FOGS_Attribute::Name(const char* _val)
+	Attribute& Attribute::Name(const char* _val)
 	{
 		auto lv_Size = strlen(_val);
 		if (!m_Data->ContextHolder)
@@ -224,26 +224,26 @@ namespace FOGS
 		return *this;
 	}
 
-	FOGS_Value FOGS_Attribute::Value()
+	ValueData Attribute::Value()
 	{
 		if (!m_Data)
 			return 0;
 
 		if (!m_Data->m_Value)
 		{
-			m_Data->m_Value = new VALUE_DATA_ALLOC ValueData(0);
+			m_Data->m_Value = new VALUE_DATA_ALLOC ValueData_impl(0);
 			m_Data->m_Value->m_Attribute = m_Data;
 		}
 
 		return m_Data->m_Value;
 	}
 
-	FOGS_Attribute::operator bool()
+	Attribute::operator bool()
 	{
 		return m_Data != 0;
 	}
 
-	bool FOGS_Attribute::IsNull()
+	bool Attribute::IsNull()
 	{
 		return m_Data == 0;
 	}

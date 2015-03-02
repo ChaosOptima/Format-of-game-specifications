@@ -33,7 +33,7 @@ void TestFile()
 	}
 }
 
-class Ins : public Serializable < FOGS_Node >
+class Ins : public Serializable < Node >
 {
 	float x = 20;
 	float y = 523;
@@ -53,7 +53,7 @@ public:
 };
 
 
-class SerTest : public Serializable < FOGS_Node >
+class SerTest : public Serializable < Node >
 {
 	int i = 10;
 	float j = 5;

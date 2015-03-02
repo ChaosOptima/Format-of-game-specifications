@@ -4,7 +4,7 @@
 
 namespace FOGS
 {
-	struct NodeData;
+	struct Node_impl;
 
 	class FOGS_Document
 	{
@@ -14,26 +14,26 @@ namespace FOGS
 
 		bool Load(const std::string& _string);
 		std::string Save();
-		FOGS_Node Root();
+		Node Root();
 		
 		int ErrorLine();
 		int ErrorChar();
 		std::string ErrorString();
 		
 	private:
-		void AddChilds(std::string& _string, NodeData* param2);
+		void AddChilds(std::string& _string, Node_impl* param2);
 
-		void WriteChild(NodeData * lv_Node, std::string& _string, std::string &lv_Tabs);
+		void WriteChild(Node_impl * lv_Node, std::string& _string, std::string &lv_Tabs);
 
-		void AddAttributes(std::string& _string, NodeData* _node);
+		void AddAttributes(std::string& _string, Node_impl* _node);
 
-		void WriteAttribute(AttributeData * lv_Attr, std::string& _string);
+		void WriteAttribute(Attribute_impl * lv_Attr, std::string& _string);
 
-		void AddValue(std::string& _string, ValueData* _value);
-		void WriteValue(std::string& _string, ValueItem *lv_Val);
+		void AddValue(std::string& _string, ValueData_impl* _value);
+		void WriteValue(std::string& _string, ValueItem_impl *lv_Val);
 		bool SkipInConstant(char _Char);
 
-		NodeData* m_Root = 0;
+		Node_impl* m_Root = 0;
 		unsigned int m_ErrorLine = 0;
 		unsigned int m_ErrorChar = 0;
 		//std::string m_ErrorString;
