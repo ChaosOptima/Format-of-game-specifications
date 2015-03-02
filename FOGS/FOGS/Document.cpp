@@ -5,13 +5,13 @@
 namespace FOGS
 {
 
-	FOGS_Document::FOGS_Document()
+	Document::Document()
 	{
 
 	}
 
 
-	bool FOGS_Document::Load(const std::string& _string)
+	bool Document::Load(const std::string& _string)
 	{
 		FOGS_Context lv_Context(_string);
 		if (!lv_Context.GetReady())
@@ -31,22 +31,22 @@ namespace FOGS
 		}
 	}
 
-	int FOGS_Document::ErrorLine()
+	int Document::ErrorLine()
 	{
 		return m_ErrorLine;
 	}
 
-	int FOGS_Document::ErrorChar()
+	int Document::ErrorChar()
 	{
 		return m_ErrorChar;
 	}
 
-	std::string FOGS_Document::ErrorString()
+	std::string Document::ErrorString()
 	{
 		return "";// m_ErrorString;
 	}
 
-	Node FOGS_Document::Root()
+	Node Document::Root()
 	{
 		if (!m_Root)
 			m_Root = new Node_impl(0);
@@ -54,12 +54,12 @@ namespace FOGS
 		return m_Root;
 	}
 
-	FOGS_Document::~FOGS_Document()
+	Document::~Document()
 	{
 		delete m_Root;
 	}
 
-	std::string FOGS_Document::Save()
+	std::string Document::Save()
 	{
 		std::string lv_Out;
 		lv_Out += "{\n";
@@ -70,7 +70,7 @@ namespace FOGS
 		return lv_Out;
 	}
 
-	void FOGS_Document::AddChilds(std::string& _string, Node_impl* _node)
+	void Document::AddChilds(std::string& _string, Node_impl* _node)
 	{
 		static std::string lv_Tabs = "\t";
 		if (!_node->m_Nodes)
@@ -80,7 +80,7 @@ namespace FOGS
 			WriteChild(lv_Node, _string, lv_Tabs);
 	}
 
-	void FOGS_Document::AddAttributes(std::string& _string, Node_impl* _node)
+	void Document::AddAttributes(std::string& _string, Node_impl* _node)
 	{
 		if (!_node->m_Attributes)
 			return;
@@ -91,7 +91,7 @@ namespace FOGS
 		_string += ')';
 	}
 
-	void FOGS_Document::AddValue(std::string& _string, ValueData_impl* _value)
+	void Document::AddValue(std::string& _string, ValueData_impl* _value)
 	{
 		for(auto lv_Val = _value->m_Values; lv_Val; lv_Val = lv_Val->Sibling)
 		{
@@ -101,7 +101,7 @@ namespace FOGS
 		}
 	}
 
-	bool FOGS_Document::SkipInConstant(char _Char)
+	bool Document::SkipInConstant(char _Char)
 	{
 		return
 			_Char == '(' || _Char == ')' ||
@@ -111,7 +111,7 @@ namespace FOGS
 			_Char == ',' || _Char == ';' ;
 	}
 
-	void FOGS_Document::WriteValue(std::string& _string, ValueItem_impl *_Val)
+	void Document::WriteValue(std::string& _string, ValueItem_impl *_Val)
 	{
 		ValueItem lv_Val = _Val;
 
@@ -156,7 +156,7 @@ namespace FOGS
 		}
 	}
 
-	void FOGS_Document::WriteChild(Node_impl * lv_Node, std::string& _string, std::string &_Tabs)
+	void Document::WriteChild(Node_impl * lv_Node, std::string& _string, std::string &_Tabs)
 	{
 		if (!lv_Node->m_Name && !lv_Node->m_Value && !lv_Node->m_Attributes)
 			return;
@@ -190,7 +190,7 @@ namespace FOGS
 
 	}
 
-	void FOGS_Document::WriteAttribute(Attribute_impl * lv_Attr, std::string& _string)
+	void Document::WriteAttribute(Attribute_impl * lv_Attr, std::string& _string)
 	{
 		if (lv_Attr->m_Name)
 		{

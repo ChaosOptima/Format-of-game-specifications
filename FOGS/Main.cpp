@@ -19,7 +19,7 @@ void TestFile()
 		fclose(lv_File);
 	}
 
-	FOGS_Document lv_doc;
+	Document lv_doc;
 	if (!lv_doc.Load(TestString))
 		cout << "Error at ln:" << lv_doc.ErrorLine() << " ch:" << lv_doc.ErrorChar();// << " " << lv_doc.ErrorString();
 	else
@@ -79,7 +79,7 @@ public:
 
 void FillTest() 
 {
-	FOGS_Document lv_doc;
+	Document lv_doc;
 	auto lv_Root = lv_doc.Root();
 
 	{

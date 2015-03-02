@@ -6,11 +6,11 @@ namespace FOGS
 {
 	struct Node_impl;
 
-	class FOGS_Document
+	class Document
 	{
 	public:
-		FOGS_Document();
-		~FOGS_Document();
+		Document();
+		~Document();
 
 		bool Load(const std::string& _string);
 		std::string Save();
